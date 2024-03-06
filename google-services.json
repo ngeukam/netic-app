@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "702670631639",
+    "project_id": "netic-app",
+    "storage_bucket": "netic-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:702670631639:android:11d56ef2b3127bc9053692",
+        "android_client_info": {
+          "package_name": "com.ngeukam.neticapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3v9xcVdOmqJD5MYlnnVTqzj2rPA-cYCs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -5,5 +5,5 @@ git add*
 git commit -m 'your message'
 git remote add origin [url.git]
 git remote -v
-git push ---set-u origin master
+git push --set-u origin master à la place: git push -f origin master
 
