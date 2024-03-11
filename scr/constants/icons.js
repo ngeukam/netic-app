@@ -13,6 +13,7 @@ const userOutline = require("../../assets/icons/user-outline.png");
 const menu = require("../../assets/icons/menu.png");
 const arrowLeft = require("../../assets/icons/arrow-left.png");
 const more = require("../../assets/icons/more.png");
+const plus = require("../../assets/icons/plus.png");
 export default {
     bell,
     bellOutline,
@@ -28,5 +29,6 @@ export default {
     userOutline,
     menu,
     arrowLeft,
-    more
+    more,
+    plus
 }

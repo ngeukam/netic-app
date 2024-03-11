@@ -3,92 +3,114 @@ import {
 	Text,
 	StyleSheet,
 	Image,
-	useWindowDimensions,
+	Pressable,
 	Animated,
 } from "react-native";
-import React from "react";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import SwipeButton from "rn-swipe-button";
-import arrowRight from "../../assets/images/arrow-right.png";
+import React, { useState, useEffect } from "react";
+import { COLORS, icons, images } from "../constants";
+import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
+import ProgressiveImage from "./ProgressiveImage";
+import { useIsFocused } from "@react-navigation/native";
+import SwButton from "./SwipeButton";
 
-export const NOTIFICATION_HEIGHT = 300;
-
+export const CARDHEIGHT = 290;
 const ListItem = () => {
+	const [visible, setVisible] = useState(false);
+	const [pressed, setPressed] = useState(false);
+
+	const focused = useIsFocused();
+
+	useEffect(() => {
+		setVisible(false);
+	}, [focused]);
+
 	return (
-		<View style={styles.container2}>
+		<View
+			style={{
+				backgroundColor: COLORS.blue_light,
+				justifyContent: "center",
+				paddingHorizontal: 80,
+				marginVertical: 12,
+				borderRadius: 10,
+				height: visible ? CARDHEIGHT + 140 : CARDHEIGHT,
+				// marginBottom: 5,
+				margin: 10,
+				flex: 1,
+				shadowColor: "black",
+				shadowOpacity: 0.2,
+				shadowRadius: 1.41,
+				shadowOffset: {
+					height: 0,
+					width: 1,
+				},
+				elevation: 2,
+			}}
+		>
+			{/* FIRST ROW */}
 			<View
 				style={{
 					flexDirection: "row",
-					marginBottom: 15,
+					// marginBottom: 10,
 					justifyContent: "center",
 					alignItems: "center",
 				}}
 			>
-				<View>
-					<Image
-						source={require("../../assets/images/carton.jpg")}
-						resizeMode="contain"
-						style={styles.headerImg}
-					/>
-				</View>
+				<ProgressiveImage
+					defaultImageSource={require("../../assets/images/default_img.png")}
+					resizeMode="cover"
+					style={styles.headerImg}
+					source={images.carton}
+				/>
 				<View style={{ flexDirection: "column" }}>
-					<View style={{ flexDirection: "row", marginBottom: 15 }}>
-						<MaterialCommunityIcons color="#222" name="weight" size={25} />
-						<Text
-							style={{
-								fontSize: 17,
-								fontWeight: "500",
-								color: "#222",
-								flex: 1,
-							}}
-						>
-							100kg
-						</Text>
-					</View>
-					<Text style={{ fontSize: 15, fontWeight: "400", color: "#222" }}>
-						Réf: CUJDLJUE
+					<Text
+						style={{
+							fontSize: 15,
+							fontWeight: "400",
+							color: COLORS.black_ligth,
+						}}
+					>
+						Ref: CUJDLJUE
 					</Text>
 				</View>
 			</View>
-
+			{/* SECOND ROW */}
 			<View
 				style={{
 					flexDirection: "row",
-					flex: 1,
+					// flex: 1,
 					justifyContent: "center",
-					marginRight: -80,
+					marginRight: -60,
 					marginLeft: -60,
 					paddingLeft: 5,
+					paddingRight: 5,
 					alignContent: "center",
 				}}
 			>
+				{/* FIRST COLUMN */}
 				<View
 					style={{
 						flexDirection: "column",
 						flex: 1,
+						rowGap: 30,
 					}}
 				>
 					<View
 						style={{
 							flexDirection: "row",
-							paddingBottom: 20,
-							// justifyContent: "space-between",
-							flex: 1,
+							// flex: 1,
 						}}
 					>
 						<View
 							style={{
 								justifyContent: "flex-end",
 								alignItems: "center",
-								// marginLeft: -40,
 							}}
 						>
 							<Text
 								style={{
 									fontSize: 15,
 									fontWeight: "500",
-									color: "#222",
-									// flex: 1,
+									color: COLORS.black_ligth,
 								}}
 							>
 								De
@@ -97,8 +119,7 @@ const ListItem = () => {
 								style={{
 									fontSize: 17,
 									fontWeight: "500",
-									color: "#222",
-									// flex: 1,
+									color: COLORS.black_ligth,
 								}}
 							>
 								Akwaazert...
@@ -109,42 +130,59 @@ const ListItem = () => {
 					<View
 						style={{
 							flexDirection: "row",
-							flex: 1,
-							// justifyContent: "space-between",
-						}}
-					>
-						<Text
-							style={{
-								fontSize: 17,
-								fontWeight: "400",
-								color: "#222",
-								// marginLeft: -40,
-							}}
-						>
-							Qté:100
-						</Text>
-					</View>
-					<View
-						style={{
-							flexDirection: "row",
-							// justifyContent: "space-between",
-							flex: 1,
+							// flex: 1,
 						}}
 					>
 						<Text
 							style={{
 								fontSize: 17,
 								fontWeight: "500",
-								color: "#222",
-								// flex: 1,
-								// marginLeft: -40,
+								color: COLORS.black_ligth,
+							}}
+						>
+							Qté: 10
+						</Text>
+					</View>
+					<View
+						style={{
+							flexDirection: "row",
+							// flex: 1,
+						}}
+					>
+						<Text
+							style={{
+								fontSize: 17,
+								fontWeight: "500",
+								color: COLORS.black_ligth,
 							}}
 						>
 							10 000 xaf
 						</Text>
 					</View>
+					{visible ? (
+						<View
+							style={{
+								flexDirection: "row",
+								// flex: 1,
+							}}
+						>
+							<Text
+								style={{
+									fontSize: 17,
+									fontWeight: "400",
+									color: COLORS.black_ligth,
+								}}
+							>
+								date recup: 09.03.2024
+							</Text>
+						</View>
+					) : (
+						<></>
+					)}
 				</View>
+				{/* END FIRST COLUMN */}
 
+				{/* SECOND COLUMN */}
 				<View
 					style={{
 						flexDirection: "column",
@@ -154,45 +192,44 @@ const ListItem = () => {
 					<View
 						style={{
 							flexDirection: "row",
-							paddingBottom: 20,
-							flex: 1,
+							// paddingBottom: 20,
+							// flex: 1,
 							alignContent: "center",
 							justifyContent: "center",
 						}}
 					>
-						<MaterialCommunityIcons
-							color="#222"
-							name="arrow-right-bold-outline"
+						<Ionicons
+							name="arrow-forward-outline"
 							size={30}
+							color={COLORS.black_ligth}
 						/>
 					</View>
 				</View>
-
+				{/* THIRD COMLUN */}
 				<View
 					style={{
 						flexDirection: "column",
 						flex: 1,
+						rowGap: 30,
 					}}
 				>
 					<View
 						style={{
 							flexDirection: "row",
-							paddingBottom: 20,
-							// justifyContent: "space-between",
-							flex: 1,
 						}}
 					>
 						<View
 							style={{
 								justifyContent: "flex-end",
 								alignItems: "center",
+								// flex: 1,
 							}}
 						>
 							<Text
 								style={{
 									fontSize: 15,
 									fontWeight: "500",
-									color: "#222",
+									color: COLORS.black_ligth,
 									// flex: 1,
 								}}
 							>
@@ -202,7 +239,7 @@ const ListItem = () => {
 								style={{
 									fontSize: 17,
 									fontWeight: "500",
-									color: "#222",
+									color: COLORS.black_ligth,
 									// flex: 1,
 								}}
 							>
@@ -213,86 +250,100 @@ const ListItem = () => {
 					<View
 						style={{
 							flexDirection: "row",
-							justifyContent: "space-between",
 							flex: 1,
+							alignContent:'center',
+							alignItems:'center'
 						}}
 					>
-						<MaterialCommunityIcons
-							color="#222"
-							name="car"
-							size={30}
-							style={{}}
+						{/* <Ionicons name="car" size={30} color={COLORS.black_ligth} /> */}
+						<Image
+							source={uri=images.taxi}
+							resizeMode="contain"
+							style={{width:80, height:80 }}
 						/>
 					</View>
 
 					<View
 						style={{
 							flexDirection: "row",
-							justifyContent: "space-between",
-							flex: 1,
+							// justifyContent: "space-between",
+							// flex: 1,
 						}}
 					>
-						<Text
+						<Pressable
+							onPress={() => setVisible(!visible)}
+							onPressIn={() => setPressed(true)}
+							onPressOut={() => setPressed(false)}
+							// style={pressed ? styles.pressed : {}}
+						>
+							<Text
+								style={{
+									fontSize: 15,
+									fontWeight: "500",
+									color: pressed ? COLORS.red : COLORS.black_ligth,
+									// textDecorationLine: "underline",
+								}}
+							>
+								{visible ? "Moins d'infos" : "Plus d'infos"}
+							</Text>
+						</Pressable>
+					</View>
+					{visible ? (
+						<View
 							style={{
-								fontSize: 15,
-								fontWeight: "500",
-								color: "#222",
-								// fontFamily: "Roboto-Regular",
-								textDecorationLine: "underline",
-								// marginRight: -80,
+								flexDirection: "row",
 							}}
 						>
-							Plus d'infos
-						</Text>
-					</View>
+							<Text
+								style={{
+									fontSize: 17,
+									fontWeight: "400",
+									color: COLORS.black_ligth,
+									// flex: 1,
+									// marginLeft: -40,
+								}}
+							>
+								Date liv: 09.03.2024
+							</Text>
+						</View>
+					) : (
+						<></>
+					)}
 				</View>
 			</View>
+			{/* THIRD ROW */}
+			{visible ? (
+				<View
+					style={{
+						flexDirection: "row",
+						marginRight: -60,
+						marginLeft: -60,
+						paddingLeft: 5,
+						paddingTop: 10,
+					}}
+				>
+					<Text
+						style={{
+							fontSize: 15,
+							fontWeight: "400",
+							color: COLORS.black_ligth,
+						}}
+					>
+						C'est un colis très léger, il faut aller doucement avec.
+					</Text>
+				</View>
+			) : (
+				<></>
+			)}
 			<View
 				style={{
 					flexDirection: "row",
 					alignContent: "center",
 					justifyContent: "center",
+					paddingTop: 5,
 				}}
 			>
-				<SwipeButton
-					disabled={false}
-					//disable the button by doing true (Optional)
-					swipeSuccessThreshold={80}
-					height={45}
-					//height of the button (Optional)
-					width={270}
-					//width of the button (Optional)
-					title="Faire glisser pour accepter"
-					titleStyles={{
-						fontSize: 15,
-						fontWeight: "500",
-						color: "#FFF",
-						fontStyle: "italic",
-						textAlign:'right'
-					}}
-					//Text inside the button (Optional)
-					//thumbIconImageSource={thumbIcon}
-					//You can also set your own icon (Optional)
-					onSwipeSuccess={() => {
-						alert("Submitted Successfully!");
-					}} //After the completion of swipe (Optional)
-					containerStyles={{
-						borderRadius:12
-					}}
-					railStyles={{
-						borderRadius:12
-					}}
-					thumbIconStyles={{
-						borderRadius:10,						
-					}}
-					thumbIconImageSource={arrowRight}
-					railFillBackgroundColor="rgba(0, 0, 0, 0.5)" //(Optional)
-					railFillBorderColor="#db5a44" //(Optional)
-					thumbIconBackgroundColor="#db5a44" //(Optional)
-					thumbIconBorderColor="#db5a44" //(Optional)
-					railBackgroundColor="#44c5db" //(Optional)
-					railBorderColor="#44c5db" //(Optional)
-				/>
+				<SwButton />
 			</View>
 		</View>
 	);
@@ -301,26 +352,8 @@ const ListItem = () => {
 export default ListItem;
 const styles = StyleSheet.create({
 	headerImg: {
-		borderRadius: 10,
+		borderRadius: 5,
 		width: 70,
 		height: 70,
-		marginRight: 10,
-	},
-	container2: {
-		backgroundColor: "#c6edf4",
-		justifyContent: "center",
-		paddingHorizontal: 80,
-		borderRadius: 10,
-		height: NOTIFICATION_HEIGHT - 10,
-		marginBottom: 5,
-		margin: 10,
-		flex: 1,
-		// shadowColor: "#FFF",
-		// shadowOpacity: .3,
-		// shadowRadius:20,
-		// shadowOffset: {
-		// 	height: 10,
-		// 	width: 0,
-		// },
 	},
 });

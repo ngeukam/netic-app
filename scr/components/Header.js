@@ -1,15 +1,15 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native'
+import { View, Text, Image, StyleSheet, Pressable } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { COLORS, icons } from '../constants';
 
-const Header = ({ onPress }) => {
+const Header = ({ title, onPress }) => {
     const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
         <View style={{flexDirection: "row", alignItems: "center"}}>
-            <TouchableOpacity 
+            <Pressable 
               onPress={()=>navigation.toggleDrawer()}
               style={styles.iconContainer}>
                 <Image
@@ -17,14 +17,14 @@ const Header = ({ onPress }) => {
                   style={styles.icon}
                   source={icons.menu}
                 />
-            </TouchableOpacity>
+            </Pressable>
             <Text style={{
                 marginLeft: 12,
                 fontSize: 17,
-                fontWeight: 'bold'
+                fontWeight: 'bold',
             }}>{title}</Text>
         </View>
-        <TouchableOpacity 
+        <Pressable 
               onPress={onPress}
               style={styles.iconContainer}>
                 <Image
@@ -32,7 +32,7 @@ const Header = ({ onPress }) => {
                   style={styles.icon}
                   source={icons.more}
                 />
-            </TouchableOpacity>
+            </Pressable>
     </View>
   )
 }
@@ -42,8 +42,10 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginTop: 20,
-        marginHorizontal: 16
+        // marginTop: 20,
+        // marginHorizontal: 16,
+        paddingVertical:10,
+        backgroundColor:COLORS.white
     },
     iconContainer: {
         height: 45,

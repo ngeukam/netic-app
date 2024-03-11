@@ -1,19 +1,25 @@
 import Home from "./Home";
 import Message from "./Message";
-import Orders from "./Orders";
+import Publications from "./Publications";
 import Profile from "./Profile";
-import Search from "./Search";
+import Jobs from "./Jobs";
 import Address from "./Address";
 import Notifications from "./Notifications";
 import Faqs from "./Faqs";
 import Favourite from "./Favourite";
 import PaymentMethod from "./PaymentMethod";
+import CreatePublication from "./CreatePublication";
+import Details from "./Details";
+import Search from "./Search";
 
 export {
     Home,
     Message,
-    Orders,
+    Publications,
     Profile,
+    CreatePublication,
+    Jobs,
+    Details,
     Search,
     Address,
     Notifications,

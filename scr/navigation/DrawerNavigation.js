@@ -8,10 +8,10 @@ import {
   Address,
   Favourite,
   Notifications,
-  Orders,
+  Publications,
   PaymentMethod,
   Profile,
-  Search,
+  Jobs,
 } from "../screens";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -47,11 +47,11 @@ const DrawerNavigation = () => {
                             color: COLORS.black,
                             marginBottom: 6
                         }}>Ngeukam Stéphane</Text>
-                        <Text style={{
+                        {/* <Text style={{
                             fontSize: 16,
                             color: COLORS.black
 
-                        }}>Ingénieur</Text>
+                        }}>Ingénieur</Text> */}
                     </View>
                     <DrawerItemList {...props} />
                 </SafeAreaView>
@@ -78,7 +78,7 @@ const DrawerNavigation = () => {
       <Drawer.Screen
         name="Home"
         options={{
-          drawerLabel: "Home",
+          drawerLabel: "Acceuil",
           title: "Home",
           headerShadowVisible: false,
           drawerIcon: () => (
@@ -88,30 +88,30 @@ const DrawerNavigation = () => {
         component={BottomTabNavigation}
       />
       <Drawer.Screen
-        name="Orders"
+        name="Publications"
         options={{
-          drawerLabel: "Orders",
-          title: "Orders",
-          headerShadowVisible: false,
+          drawerLabel: "Mes offres",
+          title: "Publications",
+          headerShadowVisible: true,
           drawerIcon: () => (
             <Ionicons name="gift-outline" size={24} color={COLORS.black} />
           ),
         }}
-        component={Orders}
+        component={Publications}
       />
       <Drawer.Screen
-        name="Search"
+        name="Jobs"
         options={{
-          drawerLabel: "Search",
-          title: "Search",
+          drawerLabel: "Mes jobs",
+          title: "Jobs",
           headerShadowVisible: false,
           drawerIcon: () => (
-            <Ionicons name="search-outline" size={24} color={COLORS.black} />
+            <Ionicons name="bag-check-outline" size={24} color={COLORS.black} />
           ),
         }}
-        component={Search}
+        component={Jobs}
       />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="Wishlist"
         options={{
           drawerLabel: "Wishlist",
@@ -162,7 +162,7 @@ const DrawerNavigation = () => {
           ),
         }}
         component={Notifications}
-      />
+      /> */}
       <Drawer.Screen
         name="Help"
         options={{
