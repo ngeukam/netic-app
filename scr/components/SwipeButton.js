@@ -3,8 +3,10 @@ import React from "react";
 import { COLORS } from "../constants";
 import arrowRight from "../../assets/images/arrow-right.png";
 import SwipeButton from "rn-swipe-button";
+import { useNavigation } from "@react-navigation/native";
 
 const SwButton = () => {
+	const navigation = useNavigation()
 	return (
 		<SwipeButton
 			disabled={false}
@@ -19,11 +21,10 @@ const SwButton = () => {
 				fontSize: 15,
 				fontWeight: "400",
 				color: COLORS.white,
-				// fontStyle: "italic",
 				paddingLeft: 30,
 			}}
 			onSwipeSuccess={() => {
-				alert("Submitted Successfully!");
+				navigation.navigate('Details', {ref:'RUDSLENK'})
 			}} //After the completion of swipe (Optional)
 			containerStyles={{
 				borderRadius: 12,

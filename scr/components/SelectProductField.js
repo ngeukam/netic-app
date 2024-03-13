@@ -12,7 +12,7 @@ const SelectProductField = ({ style, value, setValue, zIndex, textStyle }) => {
 		<DropDownPicker
 			placeholder="Que transportons-nous ?"
 			searchable={true}
-			searchPlaceholder="Saisir quelque chose"
+			searchPlaceholder="Recherchez dans la liste"
 			open={open}
 			value={value}
 			items={items}

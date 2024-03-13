@@ -10,18 +10,22 @@ const AppNavigation = () => {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator
-				screenOptions={{ headerShown: false }}
+				screenOptions={{
+					headerShown: false,
+					presentation: "modal",
+					animationTypeForReplace: "push",
+					animation: "slide_from_right",
+				}}
 				initialRouteName="Main"
 			>
-				<Stack.Screen
-					name="Main"
-					component={DrawerNavigation}
-					
-				/>
+				<Stack.Screen name="Main" component={DrawerNavigation} />
 				<Stack.Screen
 					name="Details"
 					component={Details}
-					options={{ headerShown: true }}
+					options={({ route }) => ({
+						title: 'Détails' + ' '+ route.params?.ref,
+						headerShown:true
+					  })}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>

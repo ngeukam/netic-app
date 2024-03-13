@@ -18,7 +18,7 @@ const SelectVehiculeField = ({
 		<DropDownPicker
 			placeholder="Véh. adapté"
 			searchable={true}
-			searchPlaceholder="Saisir quelque chose"
+			searchPlaceholder="Recherchez dans la liste"
 			open={open}
 			value={value}
 			items={items}

@@ -48,7 +48,7 @@ export const VehiculesItem = [
 		icon: () => <Image source={images.suv} style={styles.icon} />,
 	},
 	{
-		label: "Tricyle",
+		label: "Tricycle",
 		value: "5",
 		icon: () => <Image source={images.tricycle} style={styles.icon} />,
 	},

@@ -77,7 +77,7 @@ export default Publications;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: COLORS.gray,
+		backgroundColor: COLORS.white,
 		paddingTop: 20,
 	},
 	pressable: {

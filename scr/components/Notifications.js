@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Platform } from "react-native";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
-import { PROJECT_ID } from "@env";
+import { PROJECT_ID } from "../../config";
 
 Notifications.setNotificationHandler({
 	handleNotification: async () => ({

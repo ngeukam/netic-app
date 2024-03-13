@@ -14,6 +14,10 @@ const menu = require("../../assets/icons/menu.png");
 const arrowLeft = require("../../assets/icons/arrow-left.png");
 const more = require("../../assets/icons/more.png");
 const plus = require("../../assets/icons/plus.png");
+const current_position = require("../../assets/icons/current-position.png");
+const current_ar = require("../../assets/icons/current-position-ar.png");
+const phone = require("../../assets/icons/phone.png");
+
 export default {
     bell,
     bellOutline,
@@ -30,5 +34,8 @@ export default {
     menu,
     arrowLeft,
     more,
-    plus
+    plus,
+    current_position,
+    current_ar,
+    phone
 }

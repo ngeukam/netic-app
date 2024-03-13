@@ -12,6 +12,7 @@ import {
   PaymentMethod,
   Profile,
   Jobs,
+  Home,
 } from "../screens";
 import { SafeAreaView } from "react-native-safe-area-context";
 

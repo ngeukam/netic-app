@@ -9,7 +9,8 @@ export const COLORS = {
     black_ligth:'#222',
     blue_light:'#c6edf4',
     green:'#66FF99',
-    placeholder_text_color:'#6b7280'
+    placeholder_text_color:'#6b7280',
+    gold:'#FFD700'
 }
 
 export const SIZES = {

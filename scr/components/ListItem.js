@@ -32,7 +32,7 @@ const ListItem = () => {
 				paddingHorizontal: 80,
 				marginVertical: 12,
 				borderRadius: 10,
-				height: visible ? CARDHEIGHT + 140 : CARDHEIGHT,
+				height: visible ? CARDHEIGHT + 50 : CARDHEIGHT,
 				// marginBottom: 5,
 				margin: 10,
 				flex: 1,
@@ -140,7 +140,7 @@ const ListItem = () => {
 								color: COLORS.black_ligth,
 							}}
 						>
-							Qté: 10
+							Qté/Nb: 10
 						</Text>
 					</View>
 					<View
@@ -159,7 +159,7 @@ const ListItem = () => {
 							10 000 xaf
 						</Text>
 					</View>
-					{visible ? (
+					{/* {visible ? (
 						<View
 							style={{
 								flexDirection: "row",
@@ -178,7 +178,7 @@ const ListItem = () => {
 						</View>
 					) : (
 						<></>
-					)}
+					)} */}
 				</View>
 				{/* END FIRST COLUMN */}
 
@@ -257,7 +257,7 @@ const ListItem = () => {
 					>
 						{/* <Ionicons name="car" size={30} color={COLORS.black_ligth} /> */}
 						<Image
-							source={uri=images.taxi}
+							source={uri=images.tricycle}
 							resizeMode="contain"
 							style={{width:80, height:80 }}
 						/>
@@ -288,7 +288,7 @@ const ListItem = () => {
 							</Text>
 						</Pressable>
 					</View>
-					{visible ? (
+					{/* {visible ? (
 						<View
 							style={{
 								flexDirection: "row",
@@ -308,7 +308,7 @@ const ListItem = () => {
 						</View>
 					) : (
 						<></>
-					)}
+					)} */}
 				</View>
 			</View>
 			{/* THIRD ROW */}
@@ -329,7 +329,7 @@ const ListItem = () => {
 							color: COLORS.black_ligth,
 						}}
 					>
-						C'est un colis très léger, il faut aller doucement avec.
+						C'est un colis très léger, il faut aller doucement avec.juikks sjiis hhsj
 					</Text>
 				</View>
 			) : (

@@ -2,8 +2,8 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import React from "react";
 import { COLORS, images } from "../constants";
 import ProgressiveImage from "./ProgressiveImage";
-import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
-import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const JobsListItem = () => {
 	const navigation = useNavigation();
@@ -24,7 +24,7 @@ const JobsListItem = () => {
 				paddingRight: 10,
 				shadowColor: "black",
 				shadowOpacity: 0.2,
-				shadowRadius:1.41,
+				shadowRadius: 1.41,
 				shadowOffset: {
 					height: 0,
 					width: 1,
@@ -74,7 +74,7 @@ const JobsListItem = () => {
 				>
 					Bonamousa...
 				</Text>
-                <Text
+				<Text
 					style={{ color: COLORS.black_ligth, fontWeight: 400, fontSize: 12 }}
 				>
 					Aujourd'hui...
@@ -88,7 +88,10 @@ const JobsListItem = () => {
 					rowGap: 10,
 				}}
 			>
-				<Pressable style={{ flexDirection: "row", justifyContent: "flex-start" }} onPress={() => navigation.navigate('Details')}>
+				<Pressable
+					style={{ flexDirection: "row", justifyContent: "flex-start" }}
+					onPress={() => navigation.navigate("Details")}
+				>
 					<Ionicons name="eye" size={23} color={COLORS.black_ligth} />
 					<Text
 						style={{ color: COLORS.black_ligth, fontWeight: 400, fontSize: 15 }}
