@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
 	},
 	imageOverlay: {
         position:'absolute',
-		// width: '50',
-		backgroundColor:COLORS.gray				
+		backgroundColor:COLORS.white				
 	},
 });

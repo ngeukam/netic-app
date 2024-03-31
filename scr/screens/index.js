@@ -1,29 +1,29 @@
 import Home from "./Home";
-import Message from "./Message";
 import Publications from "./Publications";
 import Profile from "./Profile";
 import Jobs from "./Jobs";
-import Address from "./Address";
 import Notifications from "./Notifications";
-import Faqs from "./Faqs";
-import Favourite from "./Favourite";
-import PaymentMethod from "./PaymentMethod";
 import CreatePublication from "./CreatePublication";
 import Details from "./Details";
+import Details_2 from "./Details_2";
 import Search from "./Search";
+import Login from "./connexions/Login";
+import Otp from "./connexions/Otp";
+import Register from "./connexions/Register";
+import Phone from "./connexions/Phone";
 
 export {
     Home,
-    Message,
     Publications,
     Profile,
     CreatePublication,
     Jobs,
     Details,
+    Details_2,
     Search,
-    Address,
     Notifications,
-    Faqs,
-    Favourite,
-    PaymentMethod
+    Login,
+    Otp,
+    Register,
+    Phone
 }

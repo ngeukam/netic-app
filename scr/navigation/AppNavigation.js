@@ -1,35 +1,41 @@
-import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React, { useContext } from "react";
+import { View } from "react-native";
+import AuthStack from "./AuthStack";
+import AppStack from "./AppStack";
+import { AuthContext } from "../context/AuthContext";
+import LottieView from "lottie-react-native";
+import { images } from "../constants";
 import { NavigationContainer } from "@react-navigation/native";
-import DrawerNavigation from "./DrawerNavigation";
-import Details from "../screens/Details";
 
-const Stack = createNativeStackNavigator();
 
 const AppNavigation = () => {
-	return (
-		<NavigationContainer>
-			<Stack.Navigator
-				screenOptions={{
-					headerShown: false,
-					presentation: "modal",
-					animationTypeForReplace: "push",
-					animation: "slide_from_right",
-				}}
-				initialRouteName="Main"
-			>
-				<Stack.Screen name="Main" component={DrawerNavigation} />
-				<Stack.Screen
-					name="Details"
-					component={Details}
-					options={({ route }) => ({
-						title: 'Détails' + ' '+ route.params?.ref,
-						headerShown:true
-					  })}
+	const { isLoading, userToken } = useContext(AuthContext);
+
+	if (isLoading) {
+		return (
+			<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+				<LottieView
+					style={{
+						width: 300,
+						height: 180,
+					}}
+					source={images.delivery_anim}
+					autoPlay
+					loop
 				/>
-			</Stack.Navigator>
-		</NavigationContainer>
-	);
+			</View>
+		);
+	} else {
+		return (
+			<NavigationContainer>
+				{userToken !== null ? (
+					<AppStack />
+				) : (
+					<AuthStack />
+				)}
+			</NavigationContainer>
+		);
+	}
 };
 
 export default AppNavigation;

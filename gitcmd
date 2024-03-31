@@ -7,3 +7,15 @@ git remote add origin [url.git]
 git remote -v
 git push --set-u origin master à la place: git push -f origin master
 
+LORS D'UN ACCESS DENIED SUR GIT
+
+1. on ouvre git bash, on génére une pair de clés
+ssh-keygen -t ed25519 -C "stephanengeukam@gmail.com"
+ou
+ssh-keygen
+
+2. on ouvre le power shell on démarre l'agent ssh
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+
+3. on copie la clé public dans le repertoire github du projet
+

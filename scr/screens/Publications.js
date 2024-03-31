@@ -7,70 +7,181 @@ import {
 	RefreshControl,
 	Pressable,
 	Image,
-	Platform
+	Platform,
+	ActivityIndicator,
 } from "react-native";
-import React, { useRef, useCallback, useState } from "react";
+import React, {
+	useRef,
+	useCallback,
+	useState,
+	useEffect,
+	useContext,
+	useMemo,
+} from "react";
+import { Ionicons } from "@expo/vector-icons";
 import Header from "../components/Header";
 import BottomSheet from "../components/BottomSheet";
 import PublicationListItem from "../components/PublicationListItem";
 import { COLORS, icons } from "../constants";
 import { useNavigation } from "@react-navigation/native";
-
+import Button from "../components/Button";
+import { useScrollToTop } from "@react-navigation/native";
+import { instance } from "../../config";
+import { useIsFocused } from "@react-navigation/native";
 const Publications = () => {
 	const navigation = useNavigation();
+	const isfocused = useIsFocused();
 	const refRBSheet = useRef();
-	const data = new Array(20).fill(0).map((_, index) => ({ id: index }));
 	const [refreshing, setRefreshing] = useState(false);
+	const [data, setData] = useState([]);
+	const [load, setLoad] = useState(true);
+	const [loadMore, setLoadMore] = useState(true);
+	const [showLoader, setShowLoader] = useState(true);
+	const [offset, setOffset] = useState(0);
+	const ref = useRef(null);
+	let limit = 5;
+	useScrollToTop(ref);
+
 	const onRefresh = useCallback(() => {
+		handleGetAllUserPublications();
 		setRefreshing(true);
 		setTimeout(() => {
 			setRefreshing(false);
-		}, 2000);
+		}, 5000);
 	}, []);
+
+	useEffect(() => {
+		setLoadMore(true);
+		handleGetAllUserPublications();
+	}, []);
+	const handleGetAllUserPublications = async () => {
+		setLoadMore(true);
+		let query = `?l=${limit}&o=${offset}`;
+		await instance
+			.get(`order` + query)
+			.then((response) => {
+				setData([...data, ...response.data?.results]);
+				if (response.data?.results.length == 0) {
+					setOffset(offset);
+					setLoadMore(false);
+				} else {
+					setOffset(offset + 5);
+				}
+			})
+			.finally(() => {
+				setShowLoader(false);
+				setLoad(false);
+			});
+	};
 	const AddPublication = () => {
 		navigation.navigate("Create");
 	};
-	const renderItem = useCallback(({}) => {
-		return <PublicationListItem />;
-	});
+	const _renderItem = useCallback(
+		({ item }) => {
+			return (
+				<PublicationListItem
+					id={item?.id}
+					departure_place={item?.departure_place}
+					arrival_place={item?.arrival_place}
+					product={item?.product}
+					budget={item?.budget}
+					devise={item?.devise}
+					reference={item?.reference}
+					job_status={item?.accepted[0]?.job_status}
+					updated_at={item?.updated_at}
+				/>
+			);
+		},
+		[data]
+	);
 	const keyExtractor = useCallback((item) => `${item.id}`);
 
 	const onEndReached = () => {
-		alert("stop");
+		if (loadMore) {
+			handleGetAllUserPublications();
+			setShowLoader(true);
+		}
 	};
-	return (
-		<SafeAreaView style={styles.container}>
-			<Header
-				title="Mes offres"
-				onPress={() => refRBSheet.current.open()}
+	const itemSeparator = useCallback(() => {
+		return <View style={{ height: Platform.OS === "ios" ? 20 : 10 }} />;
+	}, [data]);
+	const listFooterComponent = () => {
+		return (
+			<ActivityIndicator
+				style={{ marginVertical: 32 }}
+				color={COLORS.blue}
+				size={"large"}
 			/>
-			<FlatList
-				data={data}
-				keyExtractor={keyExtractor}
-				renderItem={renderItem}
-				refreshControl={
-					<RefreshControl
-						refreshing={refreshing}
-						onRefresh={onRefresh}
-						colors={[COLORS.blue, COLORS.black_ligth]}
-					/>
-				}
-			/>
-
-			<BottomSheet bottomSheetRef={refRBSheet} />
-			<Pressable style={styles.pressable} onPress={AddPublication}>
-				<Image
-					source={icons.plus}
-					resizeMode="contain"
-					style={{
-						height: 24,
-						width: 24,
-						tintColor: COLORS.white,
-					}}
+		);
+	};
+	if (load) {
+		return (
+			<SafeAreaView style={styles.container}>
+				<Header
+					title="Mes demandes"
+					onPress={() => refRBSheet.current.open()}
 				/>
-			</Pressable>
-		</SafeAreaView>
-	);
+				<View
+					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+				>
+					<ActivityIndicator size={"large"} color={COLORS.blue} />
+				</View>
+			</SafeAreaView>
+		);
+	} else if (!load & (data.length == 0)) {
+		return (
+			<SafeAreaView style={styles.container}>
+				<Header
+					title="Mes demandes"
+					onPress={() => refRBSheet.current.open()}
+				/>
+				<View
+					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+				>
+					<Ionicons name="folder-open" size={100} color={COLORS.gray} />
+				</View>
+				<Button
+					style4={styles.pressable}
+					onPress={AddPublication}
+					imgicon={icons.plus}
+					style5={{ height: 24, width: 24, tintColor: COLORS.white }}
+				/>
+			</SafeAreaView>
+		);
+	} else {
+		return (
+			<SafeAreaView style={styles.container}>
+				<Header
+					title="Mes demandes"
+					onPress={() => refRBSheet.current.open()}
+				/>
+				<FlatList
+					data={data}
+					keyExtractor={keyExtractor}
+					renderItem={_renderItem}
+					refreshControl={
+						<RefreshControl
+							refreshing={refreshing}
+							onRefresh={onRefresh}
+							colors={[COLORS.blue, COLORS.black_ligth]}
+						/>
+					}
+					ItemSeparatorComponent={itemSeparator}
+					onEndReached={onEndReached}
+					ref={ref}
+					ListFooterComponent={showLoader && listFooterComponent}
+				/>
+
+				<BottomSheet bottomSheetRef={refRBSheet} />
+				<Button
+					style4={styles.pressable}
+					onPress={AddPublication}
+					imgicon={icons.plus}
+					style5={{ height: 24, width: 24, tintColor: COLORS.white }}
+				/>
+			</SafeAreaView>
+		);
+	}
 };
 
 export default Publications;
@@ -87,7 +198,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		position: "absolute",
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		backgroundColor: "rgba(0, 0, 0, 0.5)",
 		right: 30,
 		bottom: 30,
 	},

@@ -6,9 +6,13 @@ import {
 	TextInput,
 	Platform,
 	Image,
-	Pressable
+	Pressable,
+	ScrollView,
+	Keyboard,
+	KeyboardAvoidingView,
+	TouchableWithoutFeedback,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useContext, useEffect } from "react";
 import { COLORS } from "../constants";
 import Header2 from "../components/Header2";
 import SelectProductField from "../components/SelectProductField";
@@ -17,261 +21,329 @@ import InputField from "../components/InputField";
 import SelectDeviseField from "../components/SelectDeviseField";
 import { icons } from "../constants";
 import MapViewCard from "../components/MapViewCard";
-import DateDepartureField from "../components/DateDepatureField";
-import DateArrivalField from "../components/DateArrivalField";
+import Button from "../components/Button";
+import { instance } from "../../config";
+import { ToastSuccessMessage } from "../components/ToastSuccessMessage";
+import { ToastErrorMessage } from "../components/ToastErrorMessage";
+import { jwtDecode } from "jwt-decode";
+import { AuthContext } from "../context/AuthContext";
+import { useIsFocused } from "@react-navigation/native";
+import "core-js/stable/atob";
+import Checkbox from "expo-checkbox";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const CreatePublication = () => {
-	const [product, setProduct] = useState([]);
-	const [vehicule, setVehicule] = useState([]);
-	const [quantity, setQuantity] = useState();
-	const [budget, setBudget] = useState();
-	const [device, setDivice] = useState("1");
-	const [showPicker, setShowPicker] = useState(false);
-	const [showPickerArrival, setShowPickerArrival] = useState(false);
-	const [departuredate, setDepartureDate] = useState();
-	const [arrivaldate, setArrivalDate] = useState();
-	const [date, setDate] = useState(new Date());
+	const focused = useIsFocused();
+	const { userToken } = useContext(AuthContext);
+	const { user_id } = jwtDecode(userToken, { playload: true });
+	const [load, setLoad] = useState(false);
+	const [quantity, setQuantity] = useState(null);
+	const [budget, setBudget] = useState(null);
+	const [departure_place, setDeparturePlace] = useState("");
+	const [arrival_place, setArrivalPlace] = useState("");
+	const [product, setProduct] = useState(null);
+	const [vehicule, setVehicule] = useState(null);
+	const [devise, setDevise] = useState("1");
+	const [message, setMessage] = useState("");
+	const formData = {
+		quantity: quantity,
+		budget: budget,
+		order_user: user_id,
+		departure_place: departure_place,
+		arrival_place: arrival_place,
+		product: product,
+		vehicule: vehicule,
+		devise: devise,
+		message: message,
+	};
+	const [pickupIsChecked, setpickupIsChecked] = useState(false);
+	const [deliveryIsChecked, setdeliveryIsChecked] = useState(false);
+	useEffect(() => {
+		setArrivalPlace("");
+		setBudget("");
+		setDeparturePlace("");
+		setDevise("1");
+		setMessage("");
+		setProduct("");
+		setQuantity("");
+		setVehicule("");
+	}, [focused]);
+	const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+	useEffect(() => {
+		const keyboardDidShowListener = Keyboard.addListener(
+			"keyboardDidShow",
+			() => {
+				setKeyboardVisible(true); // or some other action
+			}
+		);
+		const keyboardDidHideListener = Keyboard.addListener(
+			"keyboardDidHide",
+			() => {
+				setKeyboardVisible(false); // or some other action
+			}
+		);
 
-	const toggleDatePicker = () => {
-		setShowPicker(!showPicker);
-	};
-	const toggleDateArrivalPicker = () => {
-		setShowPickerArrival(!showPickerArrival);
-	};
-	const onChange = ({ type }, selectedDate) => {
-		if (type == "set") {
-			const currentDate = selectedDate;
-			// setDate(currentDate);
-			if (Platform.OS === "android") {
-				toggleDatePicker();
-				setDepartureDate(currentDate.toDateString());
-			}
-		} else {
-			toggleDatePicker();
-		}
-	};
-	const onChangeArrival = ({ type }, selectedDate) => {
-		if (type == "set") {
-			const currentDate = selectedDate;
-			setDate(currentDate);
-			if (Platform.OS === "android") {
-				toggleDateArrivalPicker();
-				setArrivalDate(currentDate.toDateString());
-			}
-		} else {
-			toggleDateArrivalPicker();
-		}
-	};
-	const formatDate = (rawDate) => {
-		let date = new Date(rawDate);
-		let year = date.getFullYear();
-		let month = date.getMonth() + 1;
-		let day = date.getDay();
-		month = month < 10 ? `0${month}` : month;
-		day = day < 10 ? `0${day}` : day;
-		return `${day}-${month}-${year}`;
-	};
-	const confirmIOSDate = () => {
-		setDepartureDate(date.toDateString());
-		// setDepartureDate(formatDate(currentDate));
-		toggleDatePicker();
-	};
-	const confirmIOSArrivalDate = () => {
-		setArrivalDate(date.toDateString());
-		// setDepartureDate(formatDate(currentDate));
-		toggleDateArrivalPicker();
+		return () => {
+			keyboardDidHideListener.remove();
+			keyboardDidShowListener.remove();
+		};
+	}, []);
+	const getCurrentLocation = () => {
+		alert("to get current position");
 	};
 
+	const handleCreatePublication = async () => {
+		if (!product || !quantity || !vehicule || !budget) {
+			ToastErrorMessage("Vous avez laissé des champs vides.");
+		} else if (
+			!departure_place &
+			!arrival_place &
+			!pickupIsChecked &
+			!deliveryIsChecked
+		) {
+			ToastErrorMessage("Vous devez préciser au moins un lieu.");
+		} else if (!arrival_place & pickupIsChecked) {
+			ToastErrorMessage("Vous devez préciser le lieu de livraison.");
+		} else if (!departure_place & deliveryIsChecked) {
+			ToastErrorMessage("Vous devez préciser le lieu de récupération.");
+		} else if (pickupIsChecked & deliveryIsChecked) {
+			ToastErrorMessage("Vous devez préciser au moins un lieu.");
+		} else {
+			setLoad(true);
+			await instance.post(`order/`, formData).then(() => {
+				setArrivalPlace("");
+				setBudget("");
+				setDeparturePlace("");
+				setDevise("1");
+				setMessage("");
+				setProduct("");
+				setQuantity("");
+				setVehicule("");
+				ToastSuccessMessage(
+					"Votre demande est maintentant visible dans le réseau."
+				);
+				setLoad(false);
+			});
+		}
+	};
 	return (
 		<SafeAreaView style={styles.container}>
-			<Header2 title="Créer une offre" />
-			<View style={styles.form}>
-				<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-					<View
-						style={{
-							flexDirection: "column",
-							flex: 1,
-							flexGrow: 2.5,
-							marginRight: 5,
-						}}
-					>
-						<View style={styles.input}>
-							<SelectProductField
-								style={styles.inputControlSelect}
-								value={product}
-								setValue={setProduct}
-								zIndex={3000}
-								textStyle={styles.textStyle}
-							/>
-						</View>
-					</View>
-					<View style={{ flexDirection: "column", flex: 1 }}>
-						<View style={styles.input}>
-							<InputField
-								autoCapitalize="none"
-								placeholder="Qté/Nb"
-								keyboardType="numeric"
-								style={styles.inputControl}
-								value={quantity}
-								onChangeText={(val) => {
-									setQuantity(val);
+			<Header2 title="Créer une demande" />
+			<KeyboardAvoidingView
+				nestedScrollEnabled={true}
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+			>
+				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+					<View style={styles.form}>
+						<View
+							style={{ flexDirection: "row", justifyContent: "space-between" }}
+						>
+							<View
+								style={{
+									flexDirection: "column",
+									flex: 1,
+									flexGrow: 2,
+									marginRight: 5,
 								}}
-							/>
-						</View>
-					</View>
-				</View>
-
-				<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-					<View
-						style={{
-							flexDirection: "column",
-							flex: 1,
-							flexGrow: 1,
-							marginRight: 5,
-						}}
-					>
-						<View style={styles.input}>
-							<SelectVehiculeField
-								style={styles.inputControlSelect}
-								value={vehicule}
-								setValue={setVehicule}
-								zIndex={1000}
-								textStyle={styles.textStyle}
-							/>
-						</View>
-					</View>
-					<View style={{ flexDirection: "column", flex: 1 }}>
-						<View style={[styles.input, styles.rowdevise]}>
-							<InputField
-								autoCapitalize="none"
-								placeholder="Budget alloué"
-								keyboardType="numeric"
-								style={[styles.inputControl, styles.budgetupstyle]}
-								value={budget}
-								onChangeText={(val) => {
-									setBudget(val);
-								}}
-							/>
-							<SelectDeviseField
-								value={device}
-								setValue={setDivice}
-								zIndex={1000}
-								style={styles.devise}
-								textStyle={styles.textStyle}
-							/>
-						</View>
-					</View>
-				</View>
-				<View style={{ flexDirection: "row" }}>
-					<View style={[styles.input, { flex: 1 }]}>
-						<InputField
-							autoCapitalize="none"
-							placeholder="Lieu de recupération"
-							// keyboardType="text"
-							style={styles.inputControl}
-						/>
-					</View>
-					<Pressable onPress={() => alert('press current')}>
-						<Image
-							source={(uri = icons.current_position)}
-							resizeMode="contain"
-							style={{
-								width: 50,
-								height: 50,
-								right: 0,
-								top: 0,
-								position: "absolute",
-								zIndex: 4,
-							}}
-						/>
-					</Pressable>
-				</View>
-				<View style={{ flexDirection: "row" }}>
-					<View style={[styles.input, { flex: 1 }]}>
-						<InputField
-							autoCapitalize="none"
-							placeholder="Lieu d'arrivé"
-							// keyboardType="text"
-							style={styles.inputControl}
-						/>
-					</View>
-					<Pressable onPress={() => alert('press ar')}>
-						<Image
-							source={(uri = icons.current_ar)}
-							resizeMode="contain"
-							style={{
-								width: 50,
-								height: 50,
-								right: 0,
-								top: 0,
-								position: "absolute",
-								zIndex: 4,
-							}}
-						/>
-					</Pressable>
-				</View>
-				{/* <View
-						style={{ flexDirection: "row", justifyContent: "space-evenly" }}
-					>
-						<View style={{ flexDirection: "column" }}>
-							<Text style={styles.inputLabel}>Date de recupération</Text>
-							<View style={styles.input}>
-								<DateDepartureField
-									date={date}
-									showPicker={showPicker}
-									toggleDatePicker={toggleDatePicker}
-									onChange={onChange}
-									confirmIOSDate={confirmIOSDate}
-									style={[styles.inputControl]}
-									value={departuredate}
-									onChangeText={setDepartureDate}
-								/>
+							>
+								<View style={styles.input}>
+									<SelectProductField value={product} setValue={setProduct} />
+								</View>
+							</View>
+							<View style={{ flexDirection: "column", flex: 1 }}>
+								<View style={styles.input}>
+									<InputField
+										autoCapitalize="none"
+										placeholder="Qté/Nbre"
+										keyboardType="numeric"
+										style={styles.inputControl}
+										value={quantity}
+										onChangeText={setQuantity}
+									/>
+								</View>
 							</View>
 						</View>
-						<View style={{ flexDirection: "column" }}>
-							<Text style={styles.inputLabel}>Date arrivée souhaitée</Text>
-							<View style={styles.input}>
-								<DateArrivalField
-									date={date}
-									showPickerArrival={showPickerArrival}
-									toggleDateArrivalPicker={toggleDateArrivalPicker}
-									onChangeArrival={onChangeArrival}
-									confirmIOSArrivalDate={confirmIOSArrivalDate}
-									style={styles.inputControl}
-									value={arrivaldate}
-									onChangeText={setArrivalDate}
-									minimumDate={departuredate}
-								/>
+
+						<View
+							style={{ flexDirection: "row", justifyContent: "space-between" }}
+						>
+							<View
+								style={{
+									flexDirection: "column",
+									flex: 1,
+									flexGrow: 1,
+									marginRight: 5,
+								}}
+							>
+								<View style={styles.input}>
+									<SelectVehiculeField
+										style={styles.inputControl}
+										value={vehicule}
+										setValue={setVehicule}
+										zIndex={1000}
+										textStyle={styles.textStyle}
+									/>
+								</View>
+							</View>
+							<View style={{ flexDirection: "column", flex: 1 }}>
+								<View style={[styles.input, styles.rowdevise]}>
+									<InputField
+										autoCapitalize="none"
+										placeholder="Votre budget"
+										keyboardType="numeric"
+										style={[styles.inputControl, styles.budgetupstyle]}
+										value={budget}
+										onChangeText={setBudget}
+									/>
+									<SelectDeviseField value={devise} setValue={setDevise} />
+								</View>
 							</View>
 						</View>
-					</View> */}
-
-				<TextInput
-					style={{
-						// flex: 1,
-						textAlignVertical: "top",
-						justifyContent: "flex-start",
-						backgroundColor: COLORS.gray,
-						borderRadius: 10,
-						paddingHorizontal: 10,
-						color:COLORS.black_ligth
-					}}
-					placeholder="Laissez un message"
-					numberOfLines={4}
-				/>
-				<View style={styles.formAction}>
-					<Pressable
-						onPress={() => {
-							alert("hello");
-						}}
-					>
-						<View style={styles.btn}>
-							<View style={{ width: 32 }} />
-							<Text style={styles.btnText}>Publiez l'offre</Text>
+						<View
+							style={{
+								flexDirection: "row",
+								paddingBottom: 10,
+								justifyContent: "flex-start",
+							}}
+						>
+							{!pickupIsChecked ? (
+								<Text
+									style={{
+										fontSize: 14,
+										color: COLORS.placeholder_text_color,
+										fontWeight: 400,
+									}}
+								>
+									Cochez la case s'il n'ya pas de lieu de récup.
+								</Text>
+							) : (
+								<Text
+									style={{
+										fontSize: 14,
+										color: COLORS.placeholder_text_color,
+										fontWeight: 400,
+									}}
+								>
+									Décochez la case s'il y'a un lieu de récup.
+								</Text>
+							)}
+							<Checkbox
+								style={styles.checkbox}
+								value={pickupIsChecked}
+								onValueChange={setpickupIsChecked}
+								color={pickupIsChecked ? COLORS.blue : undefined}
+							/>
 						</View>
-					</Pressable>
-				</View>
-				<MapViewCard/>
+						{!pickupIsChecked ? (
+							<View style={{ flexDirection: "row" }}>
+								<View style={[styles.input, { flex: 1 }]}>
+									<InputField
+										autoCapitalize="none"
+										placeholder="Précisez un lieu de recupération"
+										value={departure_place}
+										onChangeText={setDeparturePlace}
+										style={styles.inputControl}
+									/>
+								</View>
+							</View>
+						) : (
+							<></>
+						)}
+						<View
+							style={{
+								flexDirection: "row",
+								paddingBottom: 10,
+								justifyContent: "flex-start",
+							}}
+						>
+							{!deliveryIsChecked ? (
+								<Text
+									style={{
+										fontSize: 14,
+										color: COLORS.placeholder_text_color,
+										fontWeight: 400,
+									}}
+								>
+									Cochez la case s'il n'ya pas de lieu de livraison.
+								</Text>
+							) : (
+								<Text
+									style={{
+										fontSize: 14,
+										color: COLORS.placeholder_text_color,
+										fontWeight: 400,
+									}}
+								>
+									Décochez la case s'il y'a un lieu de livraison.
+								</Text>
+							)}
+							<Checkbox
+								style={styles.checkbox}
+								value={deliveryIsChecked}
+								onValueChange={setdeliveryIsChecked}
+								color={deliveryIsChecked ? COLORS.blue : undefined}
+							/>
+						</View>
+						{!deliveryIsChecked ? (
+							<View style={{ flexDirection: "row" }}>
+								<View style={[styles.input, { flex: 1 }]}>
+									<InputField
+										autoCapitalize="none"
+										placeholder="Précisez un lieu d'arrivé"
+										value={arrival_place}
+										onChangeText={setArrivalPlace}
+										style={styles.inputControl}
+									/>
+								</View>
+							</View>
+						) : (
+							<></>
+						)}
+						<View style={{ flexDirection: "row" }}>
+							<InputField
+								style={{
+									// flex: 1,
+									textAlignVertical: "top",
+									justifyContent: "flex-start",
+									backgroundColor: COLORS.gray,
+									borderRadius: 10,
+									paddingHorizontal: 10,
+									color: COLORS.black_ligth,
+									fontSize: 15,
+									fontWeight: "500",
+									paddingHorizontal: 16,
+									flex: 1,
+								}}
+								placeholder="Laissez un message"
+								numberOfLines={4}
+								value={message}
+								onChangeText={setMessage}
+							/>
+						</View>
+						<View style={{ flexDirection: "row" }}>
+							<Button
+								onPress={() => {
+									handleCreatePublication();
+								}}
+								style1={styles.formAction}
+								style2={styles.btn}
+								style3={styles.btnText}
+								buttontext={"Publiez la demande"}
+								activityIndicator={load ? true : false}
+								disabled={load ? true : false}
+							/>
+						</View>
+					</View>
+				</TouchableWithoutFeedback>
+			</KeyboardAvoidingView>
+			<Button
+				style4={styles.pressable}
+				onPress={getCurrentLocation}
+				imgicon={icons.current_position}
+				style5={{ height: 40, width: 40, tintColor: COLORS.white }}
+			/>
+			<View style={{ flexDirection: "row",}}>
+				{!isKeyboardVisible ? <MapViewCard /> : <></>}
 			</View>
 		</SafeAreaView>
 	);
@@ -283,8 +355,19 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: COLORS.white,
 		paddingTop: 20,
-		borderBottomWidth: 55,
-		borderBottomColor: "transparent",
+	},
+
+	pressable: {
+		height: Platform.OS === "ios" ? 30 : 50,
+		width: Platform.OS === "ios" ? 60 : 50,
+		borderRadius: Platform.OS === "ios" ? 17 : 12,
+		justifyContent: "center",
+		alignItems: "center",
+		position: "absolute",
+		backgroundColor: "rgba(0, 0, 0, 0.5)",
+		right: 30,
+		bottom: 0,
+		zIndex:2
 	},
 	inputLabel: {
 		fontSize: 15,
@@ -294,36 +377,29 @@ const styles = StyleSheet.create({
 	/** Form */
 	form: {
 		paddingHorizontal: 10,
-		// paddingTop: 20,
+		paddingTop:10,
+		// alignContent:'center',
+		// justifyContent:'center',
+		
+
 	},
 	formAction: {
-		marginVertical: 5,
-		marginBottom: 20,
+		marginVertical: 10,
+		flex: 1,
+		alignContent: "center",
+		justifyContent: "center",
 	},
 	/** Input */
 	input: {
 		marginBottom: 12,
 	},
-	inputControlSelect: {
-		minHeight: 44,
-		borderWidth: 0,
-		backgroundColor: COLORS.gray,
-		paddingHorizontal: 16,
-		borderRadius: 12,
-		shadowOpacity: 0.2,
-		shadowRadius: 1.41,
-		shadowOffset: {
-			height: 0,
-			width: 1,
-		},
-		elevation: 2,
-	},
+
 	inputControl: {
 		minHeight: 44,
 		borderWidth: 0,
 		backgroundColor: COLORS.gray,
 		paddingHorizontal: 16,
-		borderRadius: 12,
+		borderRadius: 8,
 		fontSize: 15,
 		fontWeight: "500",
 		color: COLORS.black_ligth,
@@ -334,28 +410,15 @@ const styles = StyleSheet.create({
 			width: 1,
 		},
 		elevation: 2,
-		zIndex:0
-	},
-	devise: {
-		borderWidth: 1,
-		borderWidth: 0,
-		backgroundColor: "transparent",
-		borderRadius: 12,
-		paddingHorizontal: 5,
-		minHeight: 44,
-		zIndex: 1,
-		left: 105,
-		position: "absolute",
+		zIndex: 0,
 	},
 	rowdevise: {
 		flexDirection: "row",
+		justifyContent: "space-around",
 	},
 	budgetupstyle: {
-		position: "absolute",
-		top: 0,
-		left: 0,
-		paddingHorizontal: 70,
 		paddingLeft: 5,
+		width: "65%",
 	},
 	textStyle: {
 		fontWeight: "500",
@@ -364,11 +427,11 @@ const styles = StyleSheet.create({
 	},
 	/** Button */
 	btn: {
-		// flexDirection: "row",
+		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
 		borderRadius: 8,
-		paddingVertical: 5,
+		paddingVertical: 8,
 		paddingHorizontal: 16,
 		borderWidth: 1,
 		backgroundColor: COLORS.blue,

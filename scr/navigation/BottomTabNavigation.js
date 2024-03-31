@@ -21,10 +21,11 @@ export const screenOptions = {
 		right: 0,
 		left: 0,
 		elevation: 0,
-		borderTopRightRadius: 20,
-		borderTopLeftRadius: 20,
+		borderTopRightRadius: 13,
+		borderTopLeftRadius: 13,
 		height: Platform.OS === "ios" ? 90 : 60,
 		backgroundColor: COLORS.gray,
+		// COLORS.gray
 		borderColor: COLORS.white,
 	},
 	tabBarHideOnKeyboard: true,
@@ -116,7 +117,7 @@ const BottomTabNavigation = () => {
 
 			<Tab.Screen
 				name="Message"
-				component={Message}
+				component={Profile}
 				options={{
 					tabBarIcon: ({ focused }) => {
 						return (

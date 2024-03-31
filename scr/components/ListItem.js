@@ -1,350 +1,87 @@
-import {
-	View,
-	Text,
-	StyleSheet,
-	Image,
-	Pressable,
-	Animated,
-} from "react-native";
-import React, { useState, useEffect } from "react";
-import { COLORS, icons, images } from "../constants";
-import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
+import { View, Text, StyleSheet, Image } from "react-native";
+import React from "react";
+import moment from "moment";
+import { COLORS } from "../constants";
 import ProgressiveImage from "./ProgressiveImage";
-import { useIsFocused } from "@react-navigation/native";
 import SwButton from "./SwipeButton";
-
-export const CARDHEIGHT = 290;
-const ListItem = () => {
-	const [visible, setVisible] = useState(false);
-	const [pressed, setPressed] = useState(false);
-
-	const focused = useIsFocused();
-
-	useEffect(() => {
-		setVisible(false);
-	}, [focused]);
-
+import FChoiceProd from "../utils/FChoiceProd";
+import FChoiceVehicule from "../utils/FChoiceVehicule";
+import currencyFormat from "../utils/CurrencyFormat";
+export const CARDHEIGHT = 330;
+export const PADDING_HORIZONTAL = 80;
+const ListItem = ({
+	id,
+	reference,
+	product,
+	departure_place,
+	arrival_place,
+	quantity,
+	vehicule,
+	budget,
+	devise,
+	updated_at,
+	message,
+}) => {
 	return (
-		<View
-			style={{
-				backgroundColor: COLORS.blue_light,
-				justifyContent: "center",
-				paddingHorizontal: 80,
-				marginVertical: 12,
-				borderRadius: 10,
-				height: visible ? CARDHEIGHT + 50 : CARDHEIGHT,
-				// marginBottom: 5,
-				margin: 10,
-				flex: 1,
-				shadowColor: "black",
-				shadowOpacity: 0.2,
-				shadowRadius: 1.41,
-				shadowOffset: {
-					height: 0,
-					width: 1,
-				},
-				elevation: 2,
-			}}
-		>
-			{/* FIRST ROW */}
-			<View
-				style={{
-					flexDirection: "row",
-					// marginBottom: 10,
-					justifyContent: "center",
-					alignItems: "center",
-				}}
-			>
-				<ProgressiveImage
-					defaultImageSource={require("../../assets/images/default_img.png")}
-					resizeMode="cover"
-					style={styles.headerImg}
-					source={images.carton}
-				/>
-				<View style={{ flexDirection: "column" }}>
-					<Text
-						style={{
-							fontSize: 15,
-							fontWeight: "400",
-							color: COLORS.black_ligth,
-						}}
-					>
-						Ref: CUJDLJUE
+		<View style={styles.container}>
+			{/* PRODUCT AND ADDRESS CONTAINER */}
+			<View style={styles.proadd_container}>
+				<View style={styles.product}>
+					<ProgressiveImage
+						defaultImageSource={require("../../assets/images/default_img.png")}
+						style={styles.headerImg}
+						source={(uri = FChoiceProd(product))}
+					/>
+					<Text style={{ fontSize: 12, marginRight: 15 }}>{reference} </Text>
+				</View>
+				<View style={styles.address}>
+					<Text numberOfLines={1} style={{ fontSize: 16 }}>
+						De {departure_place}{" "}
+					</Text>
+					<Text numberOfLines={1} style={{ fontSize: 16 }}>
+						À {arrival_place}{" "}
 					</Text>
 				</View>
 			</View>
-			{/* SECOND ROW */}
-			<View
-				style={{
-					flexDirection: "row",
-					// flex: 1,
-					justifyContent: "center",
-					marginRight: -60,
-					marginLeft: -60,
-					paddingLeft: 5,
-					paddingRight: 5,
-					alignContent: "center",
-				}}
-			>
-				{/* FIRST COLUMN */}
-				<View
-					style={{
-						flexDirection: "column",
-						flex: 1,
-						rowGap: 30,
-					}}
-				>
-					<View
-						style={{
-							flexDirection: "row",
-							// flex: 1,
-						}}
-					>
-						<View
-							style={{
-								justifyContent: "flex-end",
-								alignItems: "center",
-							}}
-						>
-							<Text
-								style={{
-									fontSize: 15,
-									fontWeight: "500",
-									color: COLORS.black_ligth,
-								}}
-							>
-								De
-							</Text>
-							<Text
-								style={{
-									fontSize: 17,
-									fontWeight: "500",
-									color: COLORS.black_ligth,
-								}}
-							>
-								Akwaazert...
-							</Text>
-						</View>
-					</View>
+			{/* END PRODUCT AND ADDRESS CONTAINER */}
 
-					<View
-						style={{
-							flexDirection: "row",
-							// flex: 1,
-						}}
-					>
-						<Text
-							style={{
-								fontSize: 17,
-								fontWeight: "500",
-								color: COLORS.black_ligth,
-							}}
-						>
-							Qté/Nb: 10
-						</Text>
-					</View>
-					<View
-						style={{
-							flexDirection: "row",
-							// flex: 1,
-						}}
-					>
-						<Text
-							style={{
-								fontSize: 17,
-								fontWeight: "500",
-								color: COLORS.black_ligth,
-							}}
-						>
-							10 000 xaf
-						</Text>
-					</View>
-					{/* {visible ? (
-						<View
-							style={{
-								flexDirection: "row",
-								// flex: 1,
-							}}
-						>
-							<Text
-								style={{
-									fontSize: 17,
-									fontWeight: "400",
-									color: COLORS.black_ligth,
-								}}
-							>
-								date recup: 09.03.2024
-							</Text>
-						</View>
-					) : (
-						<></>
-					)} */}
-				</View>
-				{/* END FIRST COLUMN */}
-
-				{/* SECOND COLUMN */}
-				<View
-					style={{
-						flexDirection: "column",
-						flex: 1,
-					}}
-				>
-					<View
-						style={{
-							flexDirection: "row",
-							// paddingBottom: 20,
-							// flex: 1,
-							alignContent: "center",
-							justifyContent: "center",
-						}}
-					>
-						<Ionicons
-							name="arrow-forward-outline"
-							size={30}
-							color={COLORS.black_ligth}
-						/>
-					</View>
-				</View>
-				{/* THIRD COMLUN */}
-				<View
-					style={{
-						flexDirection: "column",
-						flex: 1,
-						rowGap: 30,
-					}}
-				>
-					<View
-						style={{
-							flexDirection: "row",
-						}}
-					>
-						<View
-							style={{
-								justifyContent: "flex-end",
-								alignItems: "center",
-								// flex: 1,
-							}}
-						>
-							<Text
-								style={{
-									fontSize: 15,
-									fontWeight: "500",
-									color: COLORS.black_ligth,
-									// flex: 1,
-								}}
-							>
-								À
-							</Text>
-							<Text
-								style={{
-									fontSize: 17,
-									fontWeight: "500",
-									color: COLORS.black_ligth,
-									// flex: 1,
-								}}
-							>
-								Bonaberie...
-							</Text>
-						</View>
-					</View>
-					<View
-						style={{
-							flexDirection: "row",
-							flex: 1,
-							alignContent:'center',
-							alignItems:'center'
-						}}
-					>
-						{/* <Ionicons name="car" size={30} color={COLORS.black_ligth} /> */}
-						<Image
-							source={uri=images.tricycle}
-							resizeMode="contain"
-							style={{width:80, height:80 }}
-						/>
-					</View>
-
-					<View
-						style={{
-							flexDirection: "row",
-							// justifyContent: "space-between",
-							// flex: 1,
-						}}
-					>
-						<Pressable
-							onPress={() => setVisible(!visible)}
-							onPressIn={() => setPressed(true)}
-							onPressOut={() => setPressed(false)}
-							// style={pressed ? styles.pressed : {}}
-						>
-							<Text
-								style={{
-									fontSize: 15,
-									fontWeight: "500",
-									color: pressed ? COLORS.red : COLORS.black_ligth,
-									// textDecorationLine: "underline",
-								}}
-							>
-								{visible ? "Moins d'infos" : "Plus d'infos"}
-							</Text>
-						</Pressable>
-					</View>
-					{/* {visible ? (
-						<View
-							style={{
-								flexDirection: "row",
-							}}
-						>
-							<Text
-								style={{
-									fontSize: 17,
-									fontWeight: "400",
-									color: COLORS.black_ligth,
-									// flex: 1,
-									// marginLeft: -40,
-								}}
-							>
-								Date liv: 09.03.2024
-							</Text>
-						</View>
-					) : (
-						<></>
-					)} */}
-				</View>
-			</View>
-			{/* THIRD ROW */}
-			{visible ? (
-				<View
-					style={{
-						flexDirection: "row",
-						marginRight: -60,
-						marginLeft: -60,
-						paddingLeft: 5,
-						paddingTop: 10,
-					}}
-				>
+			{/* QUANTITY, PRICE AND VEHICULE CONTAINER */}
+			<View style={styles.budget_vehicule_container}>
+				<View style={styles.qty_price}>
+					<Text numberOfLines={1} style={{ fontSize: 16 }}>
+						Qté/Nbr: {quantity}{" "}
+					</Text>
 					<Text
+						numberOfLines={1}
 						style={{
-							fontSize: 15,
-							fontWeight: "400",
+							fontSize: 17,
+							fontWeight: "700",
 							color: COLORS.black_ligth,
 						}}
 					>
-						C'est un colis très léger, il faut aller doucement avec.juikks sjiis hhsj
+						{currencyFormat(budget, devise )}
 					</Text>
 				</View>
-			) : (
-				<></>
-			)}
-			<View
-				style={{
-					flexDirection: "row",
-					alignContent: "center",
-					justifyContent: "center",
-					paddingTop: 5,
-				}}
-			>
-				<SwButton />
+				<View style={styles.vehicule}>
+					<Image
+						source={FChoiceVehicule(vehicule)}
+						style={{ width: 80, height: 70 }}
+					/>
+				</View>
+				<Text style={{ fontSize: 14, marginRight: 5 }}>
+					  {moment(updated_at).local().startOf('minutes').fromNow()}
+				</Text>
 			</View>
+			{/* MESSAGE CONTAINER */}
+
+			<View style={styles.message}>
+				<Text numberOfLines={2} style={{ fontSize: 15 }}>
+					{message}{" "}
+				</Text>
+			</View>
+
+			{/* END QUANTITY, PRICE AND VEHICULE CONTAINER */}
+			<SwButton id={id} reference={reference} />
 		</View>
 	);
 };
@@ -353,7 +90,59 @@ export default ListItem;
 const styles = StyleSheet.create({
 	headerImg: {
 		borderRadius: 5,
-		width: 70,
+		width: 75,
 		height: 70,
+	},
+	container: {
+		backgroundColor: COLORS.blue_light,
+		justifyContent: "center",
+		paddingHorizontal: PADDING_HORIZONTAL,
+		paddingVertical: 5,
+		height: CARDHEIGHT,
+		flex: 1,
+		shadowColor: "black",
+		shadowOpacity: 0.2,
+		shadowRadius: 1.41,
+		shadowOffset: {
+			height: 0,
+			width: 1,
+		},
+		elevation: 2,
+		borderRadius: 13,
+	},
+	proadd_container: {
+		flexDirection: "row",
+		position: "absolute",
+		top: 0,
+		margin: 5,
+		left: 0,
+	},
+	product: {
+		flexDirection: "column",
+		alignItems: "center",
+	},
+	address: {
+		marginRight: -PADDING_HORIZONTAL + 5,
+		rowGap: 30,
+	},
+	qty_price: {
+		rowGap: 35,
+		marginLeft: 5,
+	},
+	vehicule: { },
+
+	budget_vehicule_container: {
+		flexDirection: "row",
+		position: "absolute",
+		right: 0,
+		left: 0,
+		justifyContent: "space-between",
+	},
+	message: {
+		position: "absolute",
+		right: 0,
+		left: 0,
+		bottom: 80,
+		margin: 5,
 	},
 });

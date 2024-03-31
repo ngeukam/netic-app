@@ -1,21 +1,15 @@
-import 'react-native-gesture-handler';
-import { StyleSheet, Text, View } from "react-native";
+import { RootSiblingParent } from "react-native-root-siblings";
+import "react-native-gesture-handler";
 import AppNavigation from "./scr/navigation/AppNavigation";
+import { AuthProvider } from "./scr/context/AuthContext";
 
 const App = () => {
 	return (
-		<AppNavigation />
-		// <View style={styles.container}>
-
-		// </View>
+		<AuthProvider>
+			<RootSiblingParent>
+				<AppNavigation />
+			</RootSiblingParent>
+		</AuthProvider>
 	);
 };
 export default App;
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-});

@@ -8,14 +8,17 @@
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "cover",
+      "backgroundColor": "#db5a44"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +26,7 @@
         "backgroundColor": "#ffffff"
       },
       "googleServicesFile": "./google-services.json",
-      "package":"com.ngeukam.neticapp"
+      "package": "com.ngeukam.neticapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +36,9 @@
         "projectId": "9e700bb9-2a97-4cf1-85a0-d034eebf6f8a"
       }
     },
-    "owner": "useeffect"
+    "owner": "useeffect",
+    "plugins": [
+      "expo-secure-store"
+    ]
   }
 }

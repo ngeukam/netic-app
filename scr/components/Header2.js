@@ -26,9 +26,11 @@ const Header2 = ({ title }) => {
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: "row",
-		marginTop: 20,
-		paddingVertical: 10,
+		paddingVertical:10,
 		backgroundColor: COLORS.white,
+		// flex:1,
+		// justifyContent:'center'
+
 	},
 
 });

@@ -7,18 +7,27 @@ import {
 	Platform,
 	Linking,
 	Image,
+	ActivityIndicator,
 } from "react-native";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { COLORS, icons, images } from "../constants";
 import Button from "../components/Button";
 import { Feather } from "@expo/vector-icons";
+import { instance } from "../../config";
+import currencyFormat from "../utils/CurrencyFormat";
+import FChoiceProd from "../utils/FChoiceProd";
+import FChoiceVehicule from "../utils/FChoiceVehicule";
+import moment from "moment";
 
-const Details = () => {
-	const makePhoneCall = () => {
+const Details = ({ route }) => {
+	const [data, setData] = useState([]);
+	const [load, setLoad] = useState(true);
+	const [userphone, setUserPhone] = useState();
+	const makePhoneCall = (phone) => {
 		if (Platform.OS === "android") {
-			Linking.openURL("tel:694048805");
+			Linking.openURL(`tel:${phone}`);
 		} else {
-			Linking.openURL("tel:694048805");
+			Linking.openURL(`tel:${phone}`);
 		}
 	};
 	openGps = (latitude = 4.0429408, longitude = 9.706203) => {
@@ -29,184 +38,219 @@ const Details = () => {
 		});
 		Linking.openURL(url);
 	};
-	return (
-		<SafeAreaView style={styles.container}>
-			<ScrollView style={{ padding: 10 }}>
+	const handleGetUserPhone = async (id) => {
+		await instance.get(`user-phone/${id}`).then((response) => {
+			setUserPhone(response.data?.phone_number);
+		});
+	};
+	const handleGetOrderDetails = async () => {
+		await instance.get(`order/${route.params?.id}`).then((response) => {
+			setData(response.data);
+			if (response.data?.accepted[0]?.user !== undefined) {
+				handleGetUserPhone(response.data?.accepted[0]?.user);
+			}
+			setLoad(false);
+		});
+	};
+
+	useEffect(() => {
+		handleGetOrderDetails();
+	}, []);
+	if (load) {
+		return (
+			<SafeAreaView style={styles.container}>
 				<View
-					style={{
-						flexDirection: "row",
-						justifyContent: "center",
-						alignContent: "center",
-						justifyContent: "center",
-						marginVertical: 16,
-					}}
+					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
 				>
-					<Button
-						buttontext="Appelez le coursier"
-						style4={styles.stylecallbuttontext}
-						style2={styles.stylecallbuttoncontainer}
-						iconcolor="white"
-						iconname="phone-call"
-						iconsize={24}
-						onPress={makePhoneCall}
-					/>
+					<ActivityIndicator size={"large"} color={COLORS.blue} />
 				</View>
-				<View
-					style={{
-						justifyContent: "center",
-						alignContent: "center",
-						justifyContent: "center",
-						rowGap: 10,
-						marginBottom: 15,
-					}}
-				>
+			</SafeAreaView>
+		);
+	} else {
+		return (
+			<SafeAreaView style={styles.container}>
+				<ScrollView style={{ padding: 10 }}>
 					<View
 						style={{
 							flexDirection: "row",
-							flex: 1,
-							justifyContent: "space-between",
+							justifyContent: "center",
+							alignContent: "center",
+							justifyContent: "center",
+							marginVertical: 16,
 						}}
 					>
-						<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
-							À transporter
-						</Text>
-						<Image
-							source={(uri = images.carton)}
-							style={{ width: 60, height: 50 }}
-						/>
+						{data?.accepted?.length !== 0 && (
+							<Button
+								buttontext="Appelez le coursier"
+								style3={styles.stylecallbuttontext}
+								style2={styles.stylecallbuttoncontainer}
+								iconcolor="white"
+								iconname="phone-call"
+								iconsize={24}
+								onPress={() => makePhoneCall(userphone)}
+							/>
+						)}
 					</View>
 
-					<View style={{ flexDirection: "col" }}>
-						<Text
-							style={[
-								styles.inputLabel,
-								{
-									fontWeight: 500,
-									// flexDirection: "row",
-								},
-							]}
+					<View
+						style={{
+							justifyContent: "center",
+							alignContent: "center",
+							justifyContent: "center",
+							rowGap: 10,
+							marginBottom: 15,
+						}}
+					>
+						<View
+							style={{
+								flexDirection: "row",
+								flex: 1,
+								justifyContent: "space-between",
+							}}
 						>
-							Lieu de recupération
-							<Feather
-								name="map-pin"
-								size={24}
-								color={COLORS.blue}
-								onPress={openGps}
-							/>
-							<Text
-								style={{ fontStyle: "italic", fontSize: 12, color: COLORS.blue }}
-							>
-								Lancez la géolocation
+							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+								À transporter
 							</Text>
-						</Text>
-						<Text style={styles.inputLabel}>
-							Akwa tttttttttjj hhhh ààoooooooooooooooooooooooooooooooooooooo
-						</Text>
-					</View>
-					<View style={{ flexDirection: "col" }}>
-						<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
-							Lieu d'arrivé
-							<Feather
-								name="map-pin"
-								size={24}
-								color={COLORS.red}
-								onPress={openGps}
-							/>
-							<Text
-								style={{ fontStyle: "italic", fontSize: 12, color: COLORS.red }}
-							>
-								Lancez la géolocation
-							</Text>
-						</Text>
-						<Text style={styles.inputLabel}>Bonamoussadi kkkkk j</Text>
-					</View>
-					<View
-						style={{
-							flexDirection: "row",
-							flex: 1,
-							justifyContent: "space-between",
-						}}
-					>
-						<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
-							Quantité/Nombre
-						</Text>
-						<Text style={styles.inputLabel}>100</Text>
-					</View>
-					<View
-						style={{
-							flexDirection: "row",
-							flex: 1,
-							justifyContent: "space-between",
-						}}
-					>
-						<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
-							Budget prévu
-						</Text>
-						<Text style={styles.inputLabel}>1 500 xaf</Text>
-					</View>
+							{
+								<Image
+									source={FChoiceProd(data.product)}
+									style={{ width: 60, height: 60,  }}
+								/>
+							}
+						</View>
 
+						<View style={{ flexDirection: "col" }}>
+							<Text
+								style={[
+									styles.inputLabel,
+									{
+										fontWeight: 500,
+									},
+								]}
+							>
+								Lieu de recupération
+								<Feather
+									name="arrow-up-circle"
+									size={24}
+									color={COLORS.blue}
+									onPress={openGps}
+								/>
+							</Text>
+							<Text style={styles.inputLabel}>{data.departure_place}</Text>
+						</View>
+						<View style={{ flexDirection: "col" }}>
+							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+								Lieu d'arrivé
+								<Feather
+									name="arrow-down-circle"
+									size={24}
+									color={COLORS.red}
+									onPress={openGps}
+								/>
+							</Text>
+							<Text style={styles.inputLabel}>{data.arrival_place}</Text>
+						</View>
+						<View
+							style={{
+								flexDirection: "row",
+								flex: 1,
+								justifyContent: "space-between",
+							}}
+						>
+							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+								Quantité/Nombre
+							</Text>
+							<Text style={styles.inputLabel}>{data.quantity}</Text>
+						</View>
+						<View
+							style={{
+								flexDirection: "row",
+								flex: 1,
+								justifyContent: "space-between",
+							}}
+						>
+							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+								Budget prévu
+							</Text>
+							<Text style={styles.inputLabel}>
+								{currencyFormat(data.budget, data.devise)}
+							</Text>
+						</View>
+
+						<View
+							style={{
+								flexDirection: "row",
+								flex: 1,
+								justifyContent: "space-between",
+							}}
+						>
+							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+								Véhicule souhaité
+							</Text>
+							<Image
+								source={FChoiceVehicule(data.vehicule)}
+								style={{ width: 60, height: 60 }}
+							/>
+						</View>
+
+						{data.message && (<View style={{ flexDirection: "col" }}>
+							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+								Message
+							</Text>
+							<Text style={styles.inputLabel}>{data.message}</Text>
+						</View>)}
+
+						<View
+							style={{
+								flexDirection: "row",
+								flex: 1,
+								justifyContent: "space-between",
+							}}
+						>
+							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+								Date de publication
+							</Text>
+							<Text>
+								{moment(data.updated_at).startOf("minutes").fromNow()}
+							</Text>
+						</View>
+					</View>
 					<View
 						style={{
 							flexDirection: "row",
-							flex: 1,
-							justifyContent: "space-between",
+							justifyContent: "center",
+							alignContent: "center",
+							justifyContent: "space-around",
 						}}
 					>
-						<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
-							Véhicule souhaité
-						</Text>
-						<Image
-							source={(uri = images.tricycle)}
-							style={{ width: 60, height: 50 }}
+						<Button
+							buttontext="Supprimer"
+							style3={styles.stylecallbuttontext}
+							style2={styles.styledelbuttoncontainer}
+							iconcolor="white"
+							iconname="trash"
+							iconsize={24}
+						/>
+						<Button
+							buttontext="Modifier"
+							style3={styles.stylecallbuttontext}
+							style2={styles.styleupdatebuttoncontainer}
+							iconcolor="white"
+							iconname="edit"
+							iconsize={24}
+						/>
+						<Button
+							buttontext="Republier"
+							style3={styles.stylecallbuttontext}
+							style2={styles.stylepubbuttoncontainer}
+							imgicon={icons.retwitw}
+							style5={{ height: 27, width: 25 }}
 						/>
 					</View>
-
-					<View style={{ flexDirection: "col" }}>
-						<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
-							Message
-						</Text>
-						<Text style={styles.inputLabel}>
-							Akwa tttttttttjj hhhh ààoooooooooooooooooooooooooooooooooooooo
-						</Text>
-					</View>
-				</View>
-
-				<View
-					style={{
-						flexDirection: "row",
-						justifyContent: "center",
-						alignContent: "center",
-						justifyContent: "space-around",
-					}}
-				>
-					<Button
-						buttontext="Supprimer"
-						style4={styles.stylecallbuttontext}
-						style2={styles.styledelbuttoncontainer}
-						iconcolor="white"
-						iconname="trash"
-						iconsize={24}
-					/>
-					<Button
-						buttontext="Modifier"
-						style4={styles.stylecallbuttontext}
-						style2={styles.styleupdatebuttoncontainer}
-						iconcolor="white"
-						iconname="edit"
-						iconsize={24}
-					/>
-					<Button
-						buttontext="Republier"
-						style4={styles.stylecallbuttontext}
-						style2={styles.stylepubbuttoncontainer}
-						iconcolor="white"
-						iconname="arrow-up"
-						iconsize={24}
-					/>
-				</View>
-			</ScrollView>
-		</SafeAreaView>
-	);
+				</ScrollView>
+			</SafeAreaView>
+		);
+	}
 };
 
 export default Details;
@@ -226,6 +270,7 @@ const styles = StyleSheet.create({
 		fontWeight: "600",
 		color: COLORS.white,
 		textAlign: "center",
+		marginRight: 5,
 	},
 	stylecallbuttoncontainer: {
 		flexDirection: "row",
@@ -243,8 +288,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		borderRadius: 8,
-		paddingVertical: 4,
-		paddingHorizontal: 5,
+		paddingVertical: 3,
+		paddingHorizontal: 2,
 		borderWidth: 1,
 		backgroundColor: COLORS.red,
 		borderColor: COLORS.red,
@@ -254,19 +299,19 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		borderRadius: 8,
-		paddingVertical: 4,
-		paddingHorizontal: 5,
+		paddingVertical: 3,
+		paddingHorizontal: 2,
 		borderWidth: 1,
-		backgroundColor: COLORS.blue,
-		borderColor: COLORS.blue,
+		backgroundColor: COLORS.placeholder_text_color,
+		borderColor: COLORS.placeholder_text_color,
 	},
 	stylepubbuttoncontainer: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
 		borderRadius: 8,
-		paddingVertical: 4,
-		paddingHorizontal: 5,
+		paddingVertical: 3,
+		paddingHorizontal: 2,
 		borderWidth: 1,
 		backgroundColor: COLORS.blue,
 		borderColor: COLORS.blue,
