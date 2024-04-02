@@ -93,10 +93,6 @@ const Register = () => {
 					setForm({ name: "", password: "", phone_number: "" });
 					Login(form.phone_number, form.password);
 				})
-				.catch((error) => {
-					// Handle errors
-					console.error(error);
-				})
 				.finally(() => {
 					setRegisterBol(false);
 				});
@@ -126,7 +122,7 @@ const Register = () => {
 						<TextInput
 							autoCapitalize="none"
 							onChangeText={(name) => setForm({ ...form, name })}
-							placeholder="Theo Don"
+							placeholder="Ango Dan"
 							placeholderTextColor="#6b7280"
 							style={styles.inputControl}
 							value={form.name}
@@ -263,7 +259,7 @@ const styles = StyleSheet.create({
 		overflow: "hidden",
 	},
 	suggestionsText: {
-		color: COLORS.red,
+		color: COLORS.black_ligth,
 	},
 
 	/** Button */

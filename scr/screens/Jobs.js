@@ -1,22 +1,20 @@
 import {
 	View,
-	Text,
 	StyleSheet,
 	FlatList,
 	SafeAreaView,
 	RefreshControl,
 	ActivityIndicator,
-	Platform
+	Platform,
 } from "react-native";
-import React, { useRef, useState, useCallback, useEffect } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { COLORS } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import Header from "../components/Header";
 import BottomSheet from "../components/BottomSheet";
 import JobsListItem from "../components/JobsListItem";
-import { useScrollToTop } from "@react-navigation/native";
+import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 import { instance } from "../../config";
-
 const Jobs = () => {
 	// const isfocused = useIsFocused();
 	const refRBSheet = useRef();
@@ -31,17 +29,19 @@ const Jobs = () => {
 	useScrollToTop(ref);
 
 	const onRefresh = useCallback(() => {
-		handleGetAllUserPublications();
 		setRefreshing(true);
+		handleGetAllUserPublications();
 		setTimeout(() => {
 			setRefreshing(false);
 		}, 5000);
 	}, []);
 
-	useEffect(() => {
-		setLoadMore(true);
-		handleGetAllUserPublications();
-	}, []);
+	useFocusEffect(
+		useCallback(() => {
+			setLoadMore(true);
+			handleGetAllUserPublications();
+		}, [])
+	);
 	const handleGetAllUserPublications = async () => {
 		setLoadMore(true);
 		let query = `?l=${limit}&o=${offset}`;
@@ -99,34 +99,26 @@ const Jobs = () => {
 			/>
 		);
 	};
-	if (load) {
-		return (
-			<SafeAreaView style={styles.container}>
-				<Header title="Mes Jobs" onPress={() => refRBSheet.current.open()} />
+
+	return (
+		<SafeAreaView style={styles.container}>
+			<Header title="Mes Jobs" onPress={() => refRBSheet.current.open()} />
+			{load ? (
 				<View
 					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
 				>
 					<ActivityIndicator size={"large"} color={COLORS.blue} />
 				</View>
-			</SafeAreaView>
-		);
-	} else if (!load & (data.length == 0)) {
-		return (
-			<SafeAreaView style={styles.container}>
-				<Header title="Mes Jobs" onPress={() => refRBSheet.current.open()} />
+			) : data.length == 0 ? (
 				<View
 					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
 				>
 					<Ionicons name="cart" size={100} color={COLORS.gray} />
 				</View>
-			</SafeAreaView>
-		);
-	} else {
-		return (
-			<SafeAreaView style={styles.container}>
-				<Header title="Mes Jobs" onPress={() => refRBSheet.current.open()} />
+			) : (
 				<FlatList
 					data={data}
+					extraData={data}
 					keyExtractor={keyExtractor}
 					renderItem={_renderItem}
 					refreshControl={
@@ -136,16 +128,16 @@ const Jobs = () => {
 							colors={[COLORS.blue, COLORS.black_ligth]}
 						/>
 					}
-					ItemSeparatorComponent={itemSeparator}
 					onEndReached={onEndReached}
+					ItemSeparatorComponent={itemSeparator}
 					ref={ref}
 					ListFooterComponent={showLoader && listFooterComponent}
 				/>
+			)}
 
-				<BottomSheet bottomSheetRef={refRBSheet} />
-			</SafeAreaView>
-		);
-	}
+			<BottomSheet bottomSheetRef={refRBSheet} />
+		</SafeAreaView>
+	);
 };
 
 export default Jobs;

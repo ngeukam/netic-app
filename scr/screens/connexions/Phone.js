@@ -85,6 +85,7 @@ const Phone = () => {
 							defaultValue={phonenumber}
 							defaultCode="CM"
 							layout="first"
+							placeholder="..."
 							onChangeFormattedText={(text) => {
 								setPhoneNumber(text);
 							}}

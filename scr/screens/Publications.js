@@ -1,23 +1,13 @@
 import {
 	View,
-	Text,
 	SafeAreaView,
 	StyleSheet,
 	FlatList,
 	RefreshControl,
-	Pressable,
-	Image,
 	Platform,
 	ActivityIndicator,
 } from "react-native";
-import React, {
-	useRef,
-	useCallback,
-	useState,
-	useEffect,
-	useContext,
-	useMemo,
-} from "react";
+import React, { useRef, useCallback, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import Header from "../components/Header";
 import BottomSheet from "../components/BottomSheet";
@@ -25,12 +15,10 @@ import PublicationListItem from "../components/PublicationListItem";
 import { COLORS, icons } from "../constants";
 import { useNavigation } from "@react-navigation/native";
 import Button from "../components/Button";
-import { useScrollToTop } from "@react-navigation/native";
+import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 import { instance } from "../../config";
-import { useIsFocused } from "@react-navigation/native";
 const Publications = () => {
 	const navigation = useNavigation();
-	const isfocused = useIsFocused();
 	const refRBSheet = useRef();
 	const [refreshing, setRefreshing] = useState(false);
 	const [data, setData] = useState([]);
@@ -43,17 +31,19 @@ const Publications = () => {
 	useScrollToTop(ref);
 
 	const onRefresh = useCallback(() => {
-		handleGetAllUserPublications();
 		setRefreshing(true);
+		handleGetAllUserPublications();
 		setTimeout(() => {
 			setRefreshing(false);
 		}, 5000);
 	}, []);
 
-	useEffect(() => {
-		setLoadMore(true);
-		handleGetAllUserPublications();
-	}, []);
+	useFocusEffect(
+		useCallback(() => {
+			setLoadMore(true);
+			handleGetAllUserPublications();
+		}, [])
+	);
 	const handleGetAllUserPublications = async () => {
 		setLoadMore(true);
 		let query = `?l=${limit}&o=${offset}`;
@@ -114,49 +104,26 @@ const Publications = () => {
 			/>
 		);
 	};
-	if (load) {
-		return (
-			<SafeAreaView style={styles.container}>
-				<Header
-					title="Mes demandes"
-					onPress={() => refRBSheet.current.open()}
-				/>
+
+	return (
+		<SafeAreaView style={styles.container}>
+			<Header title="Mes demandes" onPress={() => refRBSheet.current.open()} />
+			{load ? (
 				<View
 					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
 				>
 					<ActivityIndicator size={"large"} color={COLORS.blue} />
 				</View>
-			</SafeAreaView>
-		);
-	} else if (!load & (data.length == 0)) {
-		return (
-			<SafeAreaView style={styles.container}>
-				<Header
-					title="Mes demandes"
-					onPress={() => refRBSheet.current.open()}
-				/>
+			) : data.length == 0 ? (
 				<View
 					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
 				>
 					<Ionicons name="folder-open" size={100} color={COLORS.gray} />
 				</View>
-				<Button
-					style4={styles.pressable}
-					onPress={AddPublication}
-					imgicon={icons.plus}
-					style5={{ height: 24, width: 24, tintColor: COLORS.white }}
-				/>
-			</SafeAreaView>
-		);
-	} else {
-		return (
-			<SafeAreaView style={styles.container}>
-				<Header
-					title="Mes demandes"
-					onPress={() => refRBSheet.current.open()}
-				/>
+			) : (
 				<FlatList
 					data={data}
+					extraData={data}
 					keyExtractor={keyExtractor}
 					renderItem={_renderItem}
 					refreshControl={
@@ -166,22 +133,22 @@ const Publications = () => {
 							colors={[COLORS.blue, COLORS.black_ligth]}
 						/>
 					}
-					ItemSeparatorComponent={itemSeparator}
 					onEndReached={onEndReached}
+					ItemSeparatorComponent={itemSeparator}
 					ref={ref}
 					ListFooterComponent={showLoader && listFooterComponent}
 				/>
+			)}
 
-				<BottomSheet bottomSheetRef={refRBSheet} />
-				<Button
-					style4={styles.pressable}
-					onPress={AddPublication}
-					imgicon={icons.plus}
-					style5={{ height: 24, width: 24, tintColor: COLORS.white }}
-				/>
-			</SafeAreaView>
-		);
-	}
+			<BottomSheet bottomSheetRef={refRBSheet} />
+			<Button
+				style4={styles.pressable}
+				onPress={AddPublication}
+				imgicon={icons.plus}
+				style5={{ height: 24, width: 24, tintColor: COLORS.white }}
+			/>
+		</SafeAreaView>
+	);
 };
 
 export default Publications;

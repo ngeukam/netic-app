@@ -24,7 +24,6 @@ import { useNavigation } from "@react-navigation/native";
 const Details_2 = ({ route }) => {
 	const navigation = useNavigation();
 	const [data, setData] = useState([]);
-	console.log(data);
 	const [load, setLoad] = useState(true);
 	const [userphone, setUserPhone] = useState();
 	const makePhoneCall = (phone) => {
@@ -139,7 +138,7 @@ const Details_2 = ({ route }) => {
 								<Feather
 									name="arrow-up-circle"
 									size={24}
-									color={COLORS.blue}
+									color={COLORS.black_ligth}
 									onPress={openGps}
 								/>
 							</Text>
@@ -151,7 +150,7 @@ const Details_2 = ({ route }) => {
 								<Feather
 									name="arrow-down-circle"
 									size={24}
-									color={COLORS.red}
+									color={COLORS.black_ligth}
 									onPress={openGps}
 								/>
 							</Text>
@@ -235,10 +234,12 @@ const Details_2 = ({ route }) => {
 						}}
 					>
 						<Button
-							buttontext="Republier"
+							buttontext="Annuler"
 							style3={styles.stylecallbuttontext}
 							style2={styles.stylepubbuttoncontainer}
-							imgicon={icons.retwitw}
+							ioconname={'ban'}
+							ioconsize={22}
+							ioconcolor={COLORS.white}
 							style5={{ height: 27, width: 25 }}
 							onPress={handlePublishOrder}
 						/>
@@ -288,8 +289,8 @@ const styles = StyleSheet.create({
 		paddingVertical: 3,
 		paddingHorizontal: 2,
 		borderWidth: 1,
-		backgroundColor: COLORS.placeholder_text_color,
-		borderColor: COLORS.placeholder_text_color,
+		backgroundColor: COLORS.red,
+		borderColor: COLORS.red,
 	},
 	iconstyle: {
 		width: 25,

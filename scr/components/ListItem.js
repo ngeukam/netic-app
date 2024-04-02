@@ -69,7 +69,7 @@ const ListItem = ({
 					/>
 				</View>
 				<Text style={{ fontSize: 14, marginRight: 5 }}>
-					  {moment(updated_at).local().startOf('minutes').fromNow()}
+					  {moment(updated_at).startOf('minutes').fromNow()}
 				</Text>
 			</View>
 			{/* MESSAGE CONTAINER */}

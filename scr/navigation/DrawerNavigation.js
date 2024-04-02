@@ -7,13 +7,13 @@ import {
 import { COLORS, images } from "../constants";
 import { Ionicons, Feather, AntDesign } from "@expo/vector-icons";
 import BottomTabNavigation from "./BottomTabNavigation";
-import { Publications, Profile, Jobs } from "../screens";
+import { Publications, Profile, Jobs, Invoice } from "../screens";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AuthContext } from "../context/AuthContext";
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigation = () => {
-	const { Logout } = useContext(AuthContext);
+	const { Logout, authPhone } = useContext(AuthContext);
 	return (
 		<Drawer.Navigator
 			drawerContent={(props) => {
@@ -45,7 +45,7 @@ const DrawerNavigation = () => {
 									marginBottom: 6,
 								}}
 							>
-								Ngeukam Stéphane
+								{authPhone}
 							</Text>
 							{/* <Text style={{
                             fontSize: 16,
@@ -181,16 +181,16 @@ const DrawerNavigation = () => {
         component={Notifications}
       /> */}
 			<Drawer.Screen
-				name="Help"
+				name="Invoice"
 				options={{
-					drawerLabel: "Mes paiements",
-					title: "Mes paiements",
+					drawerLabel: "Mes factures",
+					title: "Mes factures",
 					headerShadowVisible: false,
 					drawerIcon: () => (
 						<AntDesign name="creditcard" size={24} color={COLORS.black} />
 					),
 				}}
-				component={Profile}
+				component={Invoice}
 			/>
 		</Drawer.Navigator>
 	);

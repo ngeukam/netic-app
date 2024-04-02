@@ -18,7 +18,7 @@ import currencyFormat from "../utils/CurrencyFormat";
 import FChoiceProd from "../utils/FChoiceProd";
 import FChoiceVehicule from "../utils/FChoiceVehicule";
 import moment from "moment";
-
+import { ToastErrorMessage } from "../components/ToastErrorMessage";
 const Details = ({ route }) => {
 	const [data, setData] = useState([]);
 	const [load, setLoad] = useState(true);
@@ -48,6 +48,11 @@ const Details = ({ route }) => {
 			setData(response.data);
 			if (response.data?.accepted[0]?.user !== undefined) {
 				handleGetUserPhone(response.data?.accepted[0]?.user);
+			}
+			setLoad(false);
+		}).catch((error) => {
+			if(error.response?.status === 400){
+				ToastErrorMessage("Une erreur s'est produite lors de la récupération.")
 			}
 			setLoad(false);
 		});
@@ -132,7 +137,7 @@ const Details = ({ route }) => {
 								<Feather
 									name="arrow-up-circle"
 									size={24}
-									color={COLORS.blue}
+									color={COLORS.black_ligth}
 									onPress={openGps}
 								/>
 							</Text>
@@ -144,7 +149,7 @@ const Details = ({ route }) => {
 								<Feather
 									name="arrow-down-circle"
 									size={24}
-									color={COLORS.red}
+									color={COLORS.black_ligth}
 									onPress={openGps}
 								/>
 							</Text>

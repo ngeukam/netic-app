@@ -5,7 +5,6 @@ import ProgressiveImage from "./ProgressiveImage";
 import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
 import FChoiceProd from "../utils/FChoiceProd";
-import FChoiceDevise from "../utils/FChoiceDevise";
 import currencyFormat from "../utils/CurrencyFormat";
 
 export const CARDHEIGHT_J = 130;
@@ -67,7 +66,7 @@ const JobsListItem = ({
 						color: COLORS.red,
 					}}
 				>
-					{paid_amount} {FChoiceDevise(devise)}
+					{currencyFormat(paid_amount, devise)}
 				</Text>
 
 				<View style={styles.date}>

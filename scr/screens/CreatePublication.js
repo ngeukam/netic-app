@@ -3,16 +3,12 @@ import {
 	Text,
 	SafeAreaView,
 	StyleSheet,
-	TextInput,
 	Platform,
-	Image,
-	Pressable,
-	ScrollView,
 	Keyboard,
 	KeyboardAvoidingView,
 	TouchableWithoutFeedback,
 } from "react-native";
-import React, { useRef, useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { COLORS } from "../constants";
 import Header2 from "../components/Header2";
 import SelectProductField from "../components/SelectProductField";
@@ -25,17 +21,13 @@ import Button from "../components/Button";
 import { instance } from "../../config";
 import { ToastSuccessMessage } from "../components/ToastSuccessMessage";
 import { ToastErrorMessage } from "../components/ToastErrorMessage";
-import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "../context/AuthContext";
 import { useIsFocused } from "@react-navigation/native";
-import "core-js/stable/atob";
 import Checkbox from "expo-checkbox";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const CreatePublication = () => {
 	const focused = useIsFocused();
-	const { userToken } = useContext(AuthContext);
-	const { user_id } = jwtDecode(userToken, { playload: true });
+	const { userId } = useContext(AuthContext);
 	const [load, setLoad] = useState(false);
 	const [quantity, setQuantity] = useState(null);
 	const [budget, setBudget] = useState(null);
@@ -48,7 +40,7 @@ const CreatePublication = () => {
 	const formData = {
 		quantity: quantity,
 		budget: budget,
-		order_user: user_id,
+		order_user: userId,
 		departure_place: departure_place,
 		arrival_place: arrival_place,
 		product: product,
@@ -67,6 +59,8 @@ const CreatePublication = () => {
 		setProduct("");
 		setQuantity("");
 		setVehicule("");
+		setdeliveryIsChecked(false);
+		setpickupIsChecked(false);
 	}, [focused]);
 	const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 	useEffect(() => {
@@ -119,9 +113,12 @@ const CreatePublication = () => {
 				setProduct("");
 				setQuantity("");
 				setVehicule("");
+				setpickupIsChecked(false);
+				setdeliveryIsChecked(false);
 				ToastSuccessMessage(
 					"Votre demande est maintentant visible dans le réseau."
 				);
+			}).finally(()=>{
 				setLoad(false);
 			});
 		}
@@ -214,7 +211,7 @@ const CreatePublication = () => {
 										fontWeight: 400,
 									}}
 								>
-									Cochez la case s'il n'ya pas de lieu de récup.
+									Cochez la case s'il n'ya pas de récup à faire.
 								</Text>
 							) : (
 								<Text
@@ -224,7 +221,7 @@ const CreatePublication = () => {
 										fontWeight: 400,
 									}}
 								>
-									Décochez la case s'il y'a un lieu de récup.
+									Décochez la case s'il y'a une récup à faire.
 								</Text>
 							)}
 							<Checkbox
@@ -264,7 +261,7 @@ const CreatePublication = () => {
 										fontWeight: 400,
 									}}
 								>
-									Cochez la case s'il n'ya pas de lieu de livraison.
+									Cochez la case s'il n'ya pas une livraison à faire.
 								</Text>
 							) : (
 								<Text
@@ -274,7 +271,7 @@ const CreatePublication = () => {
 										fontWeight: 400,
 									}}
 								>
-									Décochez la case s'il y'a un lieu de livraison.
+									Décochez la case s'il y'a une livraison à faire.
 								</Text>
 							)}
 							<Checkbox
@@ -342,7 +339,7 @@ const CreatePublication = () => {
 				imgicon={icons.current_position}
 				style5={{ height: 40, width: 40, tintColor: COLORS.white }}
 			/>
-			<View style={{ flexDirection: "row",}}>
+			<View style={{ flexDirection: "row" }}>
 				{!isKeyboardVisible ? <MapViewCard /> : <></>}
 			</View>
 		</SafeAreaView>
@@ -367,7 +364,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "rgba(0, 0, 0, 0.5)",
 		right: 30,
 		bottom: 0,
-		zIndex:2
+		zIndex: 2,
 	},
 	inputLabel: {
 		fontSize: 15,
@@ -377,11 +374,7 @@ const styles = StyleSheet.create({
 	/** Form */
 	form: {
 		paddingHorizontal: 10,
-		paddingTop:10,
-		// alignContent:'center',
-		// justifyContent:'center',
-		
-
+		paddingTop: 10,
 	},
 	formAction: {
 		marginVertical: 10,

@@ -1,37 +1,37 @@
 import {
+	View,
 	StyleSheet,
 	SafeAreaView,
-	RefreshControl,
 	ActivityIndicator,
 	FlatList,
-	View,
+	RefreshControl,
 	Platform,
 } from "react-native";
-import BottomSheet from "../components/BottomSheet";
-import React, { useRef, useCallback, useState } from "react";
-import ListItem from "../components/ListItem";
+import React, { useState, useCallback, useRef } from "react";
 import { COLORS } from "../constants";
-import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import Header from "../components/Header";
-import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
-import DownloadItem from "../components/DownloadItem";
+import BottomSheet from "../components/BottomSheet";
+import { AntDesign } from "@expo/vector-icons";
 import { instance } from "../../config";
-const Home = () => {
+import InvoiceItem from "../components/InvoiceItem";
+
+export const CARDHEIGHT_J = 130;
+export const PADDING_HORIZONTAL_J = 80;
+const Invoice = () => {
 	const [data, setData] = useState([]);
-	const dataLoader = new Array(3).fill(0).map((_, index) => ({ id: index }));
+	console.log(data[0]);
 	const [load, setLoad] = useState(true);
 	const [loadMore, setLoadMore] = useState(true);
 	const [showLoader, setShowLoader] = useState(true);
 	const [offset, setOffset] = useState(0);
 	const [refreshing, setRefreshing] = useState(false);
-	const refRBSheet = useRef();
 	const ref = useRef(null);
+	const refRBSheet = useRef();
 	let limit = 5;
-	useScrollToTop(ref);
-
 	const onRefresh = useCallback(() => {
 		setRefreshing(true);
-		handleGetAllOders();
+		handleGetAllInvoices();
 		setTimeout(() => {
 			setRefreshing(false);
 		}, 5000);
@@ -40,15 +40,14 @@ const Home = () => {
 	useFocusEffect(
 		useCallback(() => {
 			setLoadMore(true);
-			handleGetAllOders();
+			handleGetAllInvoices();
 		}, [])
 	);
-
-	const handleGetAllOders = async () => {
+	const handleGetAllInvoices = async () => {
 		setLoadMore(true);
 		let query = `?l=${limit}&o=${offset}`;
 		await instance
-			.get(`order-list/` + query)
+			.get(`invoice-list/` + query)
 			.then((response) => {
 				setData([...data, ...response.data?.results]);
 				if (response.data?.results.length == 0) {
@@ -66,18 +65,13 @@ const Home = () => {
 	const _renderItem = useCallback(
 		({ item }) => {
 			return (
-				<ListItem
-					id={item?.id}
+				<InvoiceItem
 					reference={item?.reference}
-					product={item?.product}
-					departure_place={item?.departure_place}
-					arrival_place={item?.arrival_place}
-					quantity={item?.quantity}
-					budget={item?.budget}
-					devise={item?.devise}
-					updated_at={item?.updated_at}
-					vehicule={item?.vehicule}
-					message={item?.message}
+					amount={item?.amount}
+					remaining_amount={item?.payment_info[0]?.remaining_amount}
+					status={item?.payment_info[0]?.status}
+					devise={1}
+					created_at={item.created_at}
 				/>
 			);
 		},
@@ -88,7 +82,7 @@ const Home = () => {
 
 	const onEndReached = () => {
 		if (loadMore) {
-			handleGetAllOders();
+			handleGetAllInvoices();
 			setShowLoader(true);
 		}
 	};
@@ -107,23 +101,18 @@ const Home = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<Header
-				title="Les jobs pour vous"
-				onPress={() => refRBSheet.current.open()}
-			/>
+			<Header title="Mes Factures" onPress={() => refRBSheet.current.open()} />
 			{load ? (
-				<FlatList
-					data={dataLoader}
-					keyExtractor={keyExtractor}
-					renderItem={() => {
-						return <DownloadItem />;
-					}}
-				/>
+				<View
+					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+				>
+					<ActivityIndicator size={"large"} color={COLORS.blue} />
+				</View>
 			) : data.length == 0 ? (
 				<View
 					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
 				>
-					<Ionicons name="cart-outline" size={100} color={COLORS.gray} />
+					<AntDesign name="creditcard" size={100} color={COLORS.gray} />
 				</View>
 			) : (
 				<FlatList
@@ -144,18 +133,17 @@ const Home = () => {
 					ListFooterComponent={showLoader && listFooterComponent}
 				/>
 			)}
-
 			<BottomSheet bottomSheetRef={refRBSheet} />
 		</SafeAreaView>
 	);
 };
-export default Home;
+
+export default Invoice;
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: COLORS.white,
 		paddingTop: 20,
-		borderBottomWidth: 55,
-		borderBottomColor: "transparent",
 	},
 });

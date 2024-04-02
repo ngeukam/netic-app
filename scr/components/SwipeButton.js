@@ -8,19 +8,29 @@ import { instance } from "../../config";
 import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "../context/AuthContext";
 import "core-js/stable/atob";
-export const LoadSwip = true;
+import { ToastErrorMessage } from "./ToastErrorMessage";
+
 const SwButton = ({ id, reference }) => {
 	const navigation = useNavigation();
 	const { userToken } = useContext(AuthContext);
 	const { user_id } = jwtDecode(userToken, { playload: true });
 	const [swip, setSwip] = useState(false);
 	const handleAcceptJob = async () => {
-		await instance.post(`job`, { order: id, user: user_id }).then(() => {
-			setSwip(true);
-			navigation.navigate("Job_Details", {ref:reference, id:id});
-		});
+		await instance
+			.post(`job`, { order: id, user: user_id })
+			.then(() => {
+				setSwip(true);
+				navigation.navigate("Job_Details", { ref: reference, id: id });
+			})
+			.catch((error) => {
+				if (error.response?.status === 400) {
+					ToastErrorMessage("Désolé, ce job a déjà été accepté.");
+				}
+			})
+			.finally(() => {
+				setSwip(true);
+			});
 	};
-
 	return (
 		<View style={styles.container}>
 			<SwipeButton

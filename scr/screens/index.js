@@ -11,6 +11,7 @@ import Login from "./connexions/Login";
 import Otp from "./connexions/Otp";
 import Register from "./connexions/Register";
 import Phone from "./connexions/Phone";
+import Invoice from "./Invoice";
 
 export {
     Home,
@@ -20,6 +21,7 @@ export {
     Jobs,
     Details,
     Details_2,
+    Invoice,
     Search,
     Notifications,
     Login,

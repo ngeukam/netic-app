@@ -50,6 +50,7 @@ const Login = () => {
 						ref={phoneInput}
 						defaultValue={form.phone_number}
 						defaultCode="CM"
+						placeholder="..."
 						layout="first"
 						onChangeFormattedText={(phone_number) => {
 							setForm({ ...form, phone_number });
@@ -77,22 +78,15 @@ const Login = () => {
 					</View>
 				</View>
 			</KeyboardAwareScrollView>
-			{!isLoading &&(<Button
+			<Button
 				onPress={handleLoginRegister}
 				style1={styles.btncontainer}
 				style2={styles.btn}
 				style3={styles.btnText}
 				buttontext={"Se connecter"}
-			/>)}
-			{isLoading &&(<Button
-				onPress={()=>{}}
-				style1={styles.btncontainer}
-				style2={styles.btndisabled}
-				style3={styles.btnText}
-				buttontext={"Se connecter"}
-				disabled={true}
-				
-			/>)}
+				disabled={isLoading ? true : false}
+			/>
+
 			<Pressable
 				onPress={() => {
 					navigation.navigate("Login");
@@ -236,22 +230,11 @@ const styles = StyleSheet.create({
 		backgroundColor: COLORS.blue,
 		borderColor: COLORS.blue,
 	},
-	btndisabled:{
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
-		marginVertical: 10,
-		borderRadius: 8,
-		paddingVertical: 8,
-		paddingHorizontal: 16,
-		borderWidth: 1,
-		backgroundColor: COLORS.gray,
-		borderColor: COLORS.gray,
-	},
+
 	btnText: {
 		fontSize: 17,
 		lineHeight: 24,
 		fontWeight: "600",
-		color: "#fff",
+		color: COLORS.white,
 	},
 });
