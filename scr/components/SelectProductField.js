@@ -78,11 +78,11 @@ const styles = StyleSheet.create({
 	placeholderStyle: {
 		fontSize: 16,
 		color: COLORS.placeholder_text_color,
-		fontWeight: 500,
+		fontWeight: 400,
 	},
 	selectedTextStyle: {
-		fontSize: 15,
-		fontWeight: "500",
+		fontSize: 16,
+		fontWeight: "400",
 		color: COLORS.black_ligth,
 	},
 	iconStyle: {

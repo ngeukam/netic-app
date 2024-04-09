@@ -1,7 +1,8 @@
 import * as SecureStore from "expo-secure-store";
-import React, { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
 import { instance } from "../../config";
 import { ToastErrorMessage } from "../components/ToastErrorMessage";
+import { ToastSuccessMessage } from "../components/ToastSuccessMessage";
 import "core-js/stable/atob";
 import { jwtDecode } from "jwt-decode";
 
@@ -9,9 +10,9 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 	const [isLoading, setIsLoading] = useState(false);
-	const [userToken, setUserToken] = useState(null);
-	const [authPhone, setAuthphone] = useState(null);
-	const [userId, setUserId] = useState(null);
+	const [userToken, setUserToken] = useState();
+	const [authPhone, setAuthphone] = useState();
+	const [userId, setUserId] = useState();
 	//SET
 	const TokenStore = async (key, value) => {
 		await SecureStore.setItemAsync(key, value);
@@ -35,12 +36,19 @@ export const AuthProvider = ({ children }) => {
 				.post(`token`, { phone_number, password })
 				.then((res) => {
 					TokenStore("authToken", res.data.access);
+					setAuthphone(phone_number);
 					PhoneStore("Phone", JSON.stringify(phone_number));
 					setUserToken(res.data.access);
 					RefreshTokenStore("refreshToken", res.data.refresh);
 					const { user_id } = jwtDecode(res.data.access, { playload: true });
+					setUserId(user_id);
 					UserIDStore("UserId", user_id);
 					setIsLoading(false);
+				})
+				.catch((e) => {
+					if (e.response?.status === 404) {
+						ToastErrorMessage("Paramétres de connexion érronés.");
+					}
 				})
 				.finally(() => {
 					setIsLoading(false);
@@ -62,10 +70,13 @@ export const AuthProvider = ({ children }) => {
 		setIsLoading(true);
 		setUserToken(null);
 		setIsLoading(false);
+		setAuthphone(null);
+		setUserId(null);
 		await SecureStore.deleteItemAsync("UserId");
 		await SecureStore.deleteItemAsync("authToken");
 		await SecureStore.deleteItemAsync("Phone");
 		signOut();
+		ToastSuccessMessage("Vous êtes déconnecté.e!");
 	};
 	const isLoggedIn = async () => {
 		try {

@@ -31,4 +31,29 @@ export const VehiculesItem = [
 		value: "6",
 		image: images.airplane,
 	},
+	{
+		label: "Vélo",
+		value: "7",
+		image: images.bike,
+	},
+	{
+		label: "Brouette",
+		value: "8",
+		image: images.wheelbarrow,
+	},
+	{
+		label: "Bus",
+		value: "9",
+		image: images.bus,
+	},
+	{
+		label: "Fourgon",
+		value: "10",
+		image: images.fourgon,
+	},
+	{
+		label: "Train",
+		value: "11",
+		image: images.train,
+	},
 ];

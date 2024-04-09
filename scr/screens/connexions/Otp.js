@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
 	SafeAreaView,
 	StyleSheet,
@@ -11,7 +11,7 @@ import {
 	Platform,
 } from "react-native";
 import { COLORS } from "../../constants";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import Header3 from "../../components/Header3";
 import Button from "../../components/Button";
 import RensendOtp from "../../components/RensendOtp";
@@ -21,8 +21,8 @@ import { ToastErrorMessage } from "../../components/ToastErrorMessage";
 
 const Otp = () => {
 	const navigation = useNavigation();
+	const isfocused = useIsFocused();
 	const [otp, setOtp] = useState(["", "", "", ""]);
-	const [showMessage, setShowMessage] = useState(false);
 	const inputs = [];
 
 	const [resendingOtp, setResendingOtp] = useState(false);
@@ -54,7 +54,8 @@ const Otp = () => {
 	useEffect(() => {
 		GetCodeOtpStore("OtpStore");
 		GetPhoneStore("PhoneStore");
-	}, []);
+		setOtp(["", "", "", ""]);
+	}, [isfocused]);
 	//END
 	let resendTimerInterval;
 
@@ -100,7 +101,8 @@ const Otp = () => {
 				// Handle errors
 				setOtp(["", "", "", ""]);
 				console.error(error);
-			}).finally(()=> {
+			})
+			.finally(() => {
 				setResendingOtp(false);
 			});
 	};
@@ -145,7 +147,7 @@ const Otp = () => {
 						<Text style={styles.subtitle}>
 							Veuillez entrer le code reçu par sms
 						</Text>
-						
+
 						<View style={styles.otp}>
 							{otp.map((digit, index) => (
 								<TextInput

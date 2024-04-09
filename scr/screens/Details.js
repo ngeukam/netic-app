@@ -8,8 +8,9 @@ import {
 	Linking,
 	Image,
 	ActivityIndicator,
+	Alert,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { COLORS, icons, images } from "../constants";
 import Button from "../components/Button";
 import { Feather } from "@expo/vector-icons";
@@ -18,8 +19,11 @@ import currencyFormat from "../utils/CurrencyFormat";
 import FChoiceProd from "../utils/FChoiceProd";
 import FChoiceVehicule from "../utils/FChoiceVehicule";
 import moment from "moment";
+import { ToastSuccessMessage } from "../components/ToastSuccessMessage";
 import { ToastErrorMessage } from "../components/ToastErrorMessage";
+import { useNavigation } from "@react-navigation/native";
 const Details = ({ route }) => {
+	const navigation = useNavigation();
 	const [data, setData] = useState([]);
 	const [load, setLoad] = useState(true);
 	const [userphone, setUserPhone] = useState();
@@ -30,32 +34,82 @@ const Details = ({ route }) => {
 			Linking.openURL(`tel:${phone}`);
 		}
 	};
-	openGps = (latitude = 4.0429408, longitude = 9.706203) => {
-		const location = `${latitude},${longitude}`;
-		const url = Platform.select({
-			ios: `maps:${location}`,
-			android: `geo:${location}?center=${location}&q=${location}&z=16`,
-		});
-		Linking.openURL(url);
+	const NoPhoneNumber = () => {
+		Alert.alert("Oups", "Bien voloir fair une nouvelle demande pour avoir un coursier.");
 	};
+	async function openMap(latitude, longitude, label = "MyLabel") {
+		const tag = `${Platform.OS === "ios" ? "maps" : "geo"}:0,0?q=`;
+		const link = Platform.select({
+			ios: `${tag}${label}@${latitude},${longitude}`,
+			android: `${tag}${latitude},${longitude}(${label})`,
+		});
+
+		try {
+			const supported = await Linking.canOpenURL(link);
+
+			if (supported) Linking.openURL(link);
+		} catch (error) {
+			console.log(error);
+		}
+	}
 	const handleGetUserPhone = async (id) => {
 		await instance.get(`user-phone/${id}`).then((response) => {
 			setUserPhone(response.data?.phone_number);
 		});
 	};
 	const handleGetOrderDetails = async () => {
-		await instance.get(`order/${route.params?.id}`).then((response) => {
-			setData(response.data);
-			if (response.data?.accepted[0]?.user !== undefined) {
-				handleGetUserPhone(response.data?.accepted[0]?.user);
-			}
-			setLoad(false);
-		}).catch((error) => {
-			if(error.response?.status === 400){
-				ToastErrorMessage("Une erreur s'est produite lors de la récupération.")
-			}
-			setLoad(false);
-		});
+		await instance
+			.get(`order/${route.params?.id}`)
+			.then((response) => {
+				setData(response.data);
+				if (response.data?.accepted[0]?.user !== undefined) {
+					handleGetUserPhone(response.data?.accepted[0]?.user);
+				}
+			})
+			.finally(() => {
+				setLoad(false);
+			});
+	};
+
+	const handleDeleteOrder = async () => {
+		setLoad(true);
+		await instance
+			.delete(`order/${route.params?.id}`)
+			.then((response) => {
+				if (response?.status == 204) {
+					ToastSuccessMessage("Cette demande a été supprimée!");
+					navigation.goBack();
+				} else if (response?.status == 200) {
+					ToastErrorMessage("Cette demande a été accpetée pour un job.");
+				}
+			})
+			.finally(() => {
+				setLoad(false);
+			});
+	};
+	const DeleteAlert = () => {
+		Alert.alert("Suppression", "Voulez-vous supprimez cette demande ?", [
+			{
+				text: "Annuler",
+				onPress: () => console.log("Cancel Pressed"),
+				style: "cancel",
+			},
+			{ text: "Valider", onPress: () => handleDeleteOrder() },
+		]);
+	};
+	const handlePublishOrder = async () => {
+		if (route.params?.is_paid) {
+			ToastErrorMessage(
+				"Désolé, cette demande est facturée, elle ne peut être publiée."
+			);
+		} else {
+			setLoad(true);
+			await instance.put(`job/${route.params?.id}`).then(() => {
+				ToastSuccessMessage("La demande est à nouveau visible dans le réseau.");
+				navigation.goBack();
+				setLoad(false);
+			});
+		}
 	};
 
 	useEffect(() => {
@@ -92,7 +146,11 @@ const Details = ({ route }) => {
 								iconcolor="white"
 								iconname="phone-call"
 								iconsize={24}
-								onPress={() => makePhoneCall(userphone)}
+								onPress={() =>
+									route.params?.is_paid == false
+										? makePhoneCall(userphone)
+										: NoPhoneNumber()
+								}
 							/>
 						)}
 					</View>
@@ -113,13 +171,18 @@ const Details = ({ route }) => {
 								justifyContent: "space-between",
 							}}
 						>
-							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+							<Text
+								style={[
+									styles.inputLabel,
+									{ fontWeight: 500, color: COLORS.placeholder_text_color },
+								]}
+							>
 								À transporter
 							</Text>
 							{
 								<Image
 									source={FChoiceProd(data.product)}
-									style={{ width: 60, height: 60,  }}
+									style={{ width: 60, height: 60 }}
 								/>
 							}
 						</View>
@@ -130,27 +193,45 @@ const Details = ({ route }) => {
 									styles.inputLabel,
 									{
 										fontWeight: 500,
+										color: COLORS.placeholder_text_color,
 									},
 								]}
 							>
 								Lieu de recupération
 								<Feather
-									name="arrow-up-circle"
+									name="map-pin"
 									size={24}
-									color={COLORS.black_ligth}
-									onPress={openGps}
+									color={COLORS.blue}
+									onPress={() => {
+										openMap(
+											data.lat_departure_place,
+											data.long_departure_place,
+											`Lieu de récup ${data.departure_place}`
+										);
+									}}
 								/>
 							</Text>
 							<Text style={styles.inputLabel}>{data.departure_place}</Text>
 						</View>
 						<View style={{ flexDirection: "col" }}>
-							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+							<Text
+								style={[
+									styles.inputLabel,
+									{ fontWeight: 500, color: COLORS.placeholder_text_color },
+								]}
+							>
 								Lieu d'arrivé
 								<Feather
-									name="arrow-down-circle"
+									name="map-pin"
 									size={24}
-									color={COLORS.black_ligth}
-									onPress={openGps}
+									color={COLORS.red}
+									onPress={() => {
+										openMap(
+											data.lat_arrival_place,
+											data.long_arrival_place,
+											`Lieu de livraison ${data.arrival_place}`
+										);
+									}}
 								/>
 							</Text>
 							<Text style={styles.inputLabel}>{data.arrival_place}</Text>
@@ -162,7 +243,12 @@ const Details = ({ route }) => {
 								justifyContent: "space-between",
 							}}
 						>
-							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+							<Text
+								style={[
+									styles.inputLabel,
+									{ fontWeight: 500, color: COLORS.placeholder_text_color },
+								]}
+							>
 								Quantité/Nombre
 							</Text>
 							<Text style={styles.inputLabel}>{data.quantity}</Text>
@@ -174,11 +260,16 @@ const Details = ({ route }) => {
 								justifyContent: "space-between",
 							}}
 						>
-							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+							<Text
+								style={[
+									styles.inputLabel,
+									{ fontWeight: 500, color: COLORS.placeholder_text_color },
+								]}
+							>
 								Budget prévu
 							</Text>
-							<Text style={styles.inputLabel}>
-								{currencyFormat(data.budget, data.devise)}
+							<Text style={[styles.inputLabel, { fontWeight: "500" }]}>
+								{data.budget && currencyFormat(data.budget, data.devise)}
 							</Text>
 						</View>
 
@@ -189,7 +280,12 @@ const Details = ({ route }) => {
 								justifyContent: "space-between",
 							}}
 						>
-							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+							<Text
+								style={[
+									styles.inputLabel,
+									{ fontWeight: 500, color: COLORS.placeholder_text_color },
+								]}
+							>
 								Véhicule souhaité
 							</Text>
 							<Image
@@ -198,12 +294,19 @@ const Details = ({ route }) => {
 							/>
 						</View>
 
-						{data.message && (<View style={{ flexDirection: "col" }}>
-							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
-								Message
-							</Text>
-							<Text style={styles.inputLabel}>{data.message}</Text>
-						</View>)}
+						{data.message && (
+							<View style={{ flexDirection: "col" }}>
+								<Text
+									style={[
+										styles.inputLabel,
+										{ fontWeight: 500, color: COLORS.placeholder_text_color },
+									]}
+								>
+									Message
+								</Text>
+								<Text style={styles.inputLabel}>{data.message}</Text>
+							</View>
+						)}
 
 						<View
 							style={{
@@ -212,11 +315,16 @@ const Details = ({ route }) => {
 								justifyContent: "space-between",
 							}}
 						>
-							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
-								Date de publication
+							<Text
+								style={[
+									styles.inputLabel,
+									{ fontWeight: 500, color: COLORS.placeholder_text_color },
+								]}
+							>
+								Date de création
 							</Text>
 							<Text>
-								{moment(data.updated_at).startOf("minutes").fromNow()}
+								{moment(data.created_at).startOf("minutes").fromNow()}
 							</Text>
 						</View>
 					</View>
@@ -228,14 +336,17 @@ const Details = ({ route }) => {
 							justifyContent: "space-around",
 						}}
 					>
-						<Button
-							buttontext="Supprimer"
-							style3={styles.stylecallbuttontext}
-							style2={styles.styledelbuttoncontainer}
-							iconcolor="white"
-							iconname="trash"
-							iconsize={24}
-						/>
+						{!route.params?.job_status && (
+							<Button
+								buttontext="Supprimer"
+								style3={styles.stylecallbuttontext}
+								style2={styles.styledelbuttoncontainer}
+								iconcolor="white"
+								iconname="trash"
+								iconsize={24}
+								onPress={DeleteAlert}
+							/>
+						)}
 						<Button
 							buttontext="Modifier"
 							style3={styles.stylecallbuttontext}
@@ -243,14 +354,38 @@ const Details = ({ route }) => {
 							iconcolor="white"
 							iconname="edit"
 							iconsize={24}
+							onPress={() =>
+								navigation.navigate("Edit_Publication", {
+									ref: data.reference,
+									product: data.product,
+									quantity: data.quantity,
+									vehicule: data.vehicule,
+									budget: data.budget,
+									is_paid:data.is_paid,
+									devise: data.devise,
+									departure_place: data.departure_place,
+									arrival_place: data.arrival_place,
+									id: data.id,
+									job_status: route.params?.job_status,
+									lat_departure_place: data.lat_departure_place,
+									lat_arrival_place: data.lat_arrival_place,
+									long_departure_place: data.long_departure_place,
+									long_arrival_place: data.long_arrival_place,
+								})
+							}
 						/>
-						<Button
-							buttontext="Republier"
-							style3={styles.stylecallbuttontext}
-							style2={styles.stylepubbuttoncontainer}
-							imgicon={icons.retwitw}
-							style5={{ height: 27, width: 25 }}
-						/>
+						{route.params?.job_status && (
+							<Button
+								buttontext="Republier"
+								style3={styles.stylecallbuttontext}
+								style2={styles.stylepubbuttoncontainer}
+								imgicon={icons.retwitw}
+								style5={{ height: 27, width: 25 }}
+								onPress={() => {
+									handlePublishOrder();
+								}}
+							/>
+						)}
 					</View>
 				</ScrollView>
 			</SafeAreaView>
@@ -283,7 +418,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		borderRadius: 8,
 		paddingVertical: 8,
-		paddingHorizontal: 20,
+		// paddingHorizontal: 20,
 		borderWidth: 1,
 		backgroundColor: COLORS.blue,
 		borderColor: COLORS.blue,
@@ -294,7 +429,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		borderRadius: 8,
 		paddingVertical: 3,
-		paddingHorizontal: 2,
+		// paddingHorizontal: 2,
 		borderWidth: 1,
 		backgroundColor: COLORS.red,
 		borderColor: COLORS.red,
@@ -305,7 +440,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		borderRadius: 8,
 		paddingVertical: 3,
-		paddingHorizontal: 2,
+		// paddingHorizontal: 2,
 		borderWidth: 1,
 		backgroundColor: COLORS.placeholder_text_color,
 		borderColor: COLORS.placeholder_text_color,
@@ -316,7 +451,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		borderRadius: 8,
 		paddingVertical: 3,
-		paddingHorizontal: 2,
+		// paddingHorizontal: 2,
 		borderWidth: 1,
 		backgroundColor: COLORS.blue,
 		borderColor: COLORS.blue,

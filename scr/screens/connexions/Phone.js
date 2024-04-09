@@ -24,15 +24,12 @@ const Phone = () => {
 	const [phonenumber, setPhoneNumber] = useState("");
 	const [otpcode, setOTPCode] = useState(null);
 	const [sendotpcode, setSendOTPCode] = useState(false);
-	const [valid, setValid] = useState(false);
-	const [showMessage, setShowMessage] = useState(false);
 	const phoneInput = useRef(null);
-	console.log(otpcode);
-	let listPhone = [];
 
 	useEffect(() => {
 		setOTPCode(generateOTPCode);
 	}, []);
+
 	//FUNCTIONS TO STORE IN ASYNC STORAGE
 	const CodeOtpStore = async (key, value) => {
 		await SecureStore.setItemAsync(key, value);
@@ -60,7 +57,8 @@ const Phone = () => {
 				if (e.response?.status === 400) {
 					ToastErrorMessage("Ce numéro existe déjà!");
 				}
-			}).finally(()=> {
+			})
+			.finally(() => {
 				setSendOTPCode(false);
 			});
 	};
@@ -103,7 +101,6 @@ const Phone = () => {
 								const checkValid = phoneInput.current?.isValidNumber(
 									phonenumber
 								);
-								setValid(checkValid ? checkValid : false);
 								if (checkValid) {
 									handleSendOtpCode();
 								} else {

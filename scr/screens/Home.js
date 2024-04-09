@@ -8,7 +8,7 @@ import {
 	Platform,
 } from "react-native";
 import BottomSheet from "../components/BottomSheet";
-import React, { useRef, useCallback, useState } from "react";
+import { useRef, useCallback, useState, useContext } from "react";
 import ListItem from "../components/ListItem";
 import { COLORS } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,7 +16,10 @@ import Header from "../components/Header";
 import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 import DownloadItem from "../components/DownloadItem";
 import { instance } from "../../config";
+import { LocationContext } from "../context/LocationContext";
+
 const Home = () => {
+	const { location } = useContext(LocationContext);
 	const [data, setData] = useState([]);
 	const dataLoader = new Array(3).fill(0).map((_, index) => ({ id: index }));
 	const [load, setLoad] = useState(true);
@@ -24,6 +27,8 @@ const Home = () => {
 	const [showLoader, setShowLoader] = useState(true);
 	const [offset, setOffset] = useState(0);
 	const [refreshing, setRefreshing] = useState(false);
+	const [searchText, setSearchText] = useState("");
+	const [filterdata, setfilterData] = useState([]);
 	const refRBSheet = useRef();
 	const ref = useRef(null);
 	let limit = 5;
@@ -36,20 +41,24 @@ const Home = () => {
 			setRefreshing(false);
 		}, 5000);
 	}, []);
-
 	useFocusEffect(
 		useCallback(() => {
+			setSearchText("");
 			setLoadMore(true);
 			handleGetAllOders();
 		}, [])
 	);
-
 	const handleGetAllOders = async () => {
 		setLoadMore(true);
-		let query = `?l=${limit}&o=${offset}`;
+		let lat = location?.coords?.latitude;
+		let long = location?.coords?.longitude;
+		let query1 = `?l=${limit}&o=${offset}`;
+		let query2 = `&lat=${lat}&long=${long}`;
+
 		await instance
-			.get(`order-list/` + query)
+			.get(`order-list/` + query1 + query2)
 			.then((response) => {
+				setfilterData([...data, ...response.data?.results]);
 				setData([...data, ...response.data?.results]);
 				if (response.data?.results.length == 0) {
 					setOffset(offset);
@@ -75,16 +84,16 @@ const Home = () => {
 					quantity={item?.quantity}
 					budget={item?.budget}
 					devise={item?.devise}
-					updated_at={item?.updated_at}
+					created_at={item?.created_at}
 					vehicule={item?.vehicule}
 					message={item?.message}
 				/>
 			);
 		},
-		[data]
+		[filterdata]
 	);
 
-	const keyExtractor = useCallback((item) => `${item.id}`);
+	const _keyExtractor = useCallback((item, index) => index);
 
 	const onEndReached = () => {
 		if (loadMore) {
@@ -94,7 +103,7 @@ const Home = () => {
 	};
 	const itemSeparator = useCallback(() => {
 		return <View style={{ height: Platform.OS === "ios" ? 20 : 10 }} />;
-	}, [data]);
+	}, [filterdata]);
 	const listFooterComponent = () => {
 		return (
 			<ActivityIndicator
@@ -105,21 +114,39 @@ const Home = () => {
 		);
 	};
 
+	const handlesearchFilter = (text) => {
+		if (text) {
+			const newData = data.filter((item) => {
+				const itemData = item.departure_place
+					? item.departure_place.toUpperCase()
+					: "".toUpperCase();
+				const textData = text.toUpperCase();
+				return itemData.indexOf(textData) > -1;
+			});
+			setfilterData(newData);
+			setSearchText(text);
+		} else {
+			setfilterData(data);
+			setSearchText(text);
+		}
+	};
 	return (
 		<SafeAreaView style={styles.container}>
 			<Header
-				title="Les jobs pour vous"
+				title="Les jobs"
+				onChangeText={(text) => handlesearchFilter(text)}
+				searchText={searchText}
 				onPress={() => refRBSheet.current.open()}
 			/>
 			{load ? (
 				<FlatList
 					data={dataLoader}
-					keyExtractor={keyExtractor}
+					keyExtractor={_keyExtractor}
 					renderItem={() => {
 						return <DownloadItem />;
 					}}
 				/>
-			) : data.length == 0 ? (
+			) : filterdata.length == 0 ? (
 				<View
 					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
 				>
@@ -127,9 +154,9 @@ const Home = () => {
 				</View>
 			) : (
 				<FlatList
-					data={data}
-					extraData={data}
-					keyExtractor={keyExtractor}
+					data={filterdata}
+					extraData={filterdata}
+					keyExtractor={_keyExtractor}
 					renderItem={_renderItem}
 					refreshControl={
 						<RefreshControl

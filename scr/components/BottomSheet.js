@@ -38,7 +38,7 @@ const BottomSheet = ({ bottomSheetRef }) => {
 				if (data[0]?.total_paid_amount) {
 					handleCreateInvoice();
 					ToastSuccessMessage(
-						`Vous avez une facture impayée d'une valeur de ${currencyFormat(
+						`Vous avez une nouvelle facture impayée d'une valeur de ${currencyFormat(
 							data[0]?.total_paid_amount,
 							1
 						)}`
@@ -77,12 +77,13 @@ const BottomSheet = ({ bottomSheetRef }) => {
 				},
 			}}
 		>
-			<View style={{ flexDirection: "row", justifyContent:'space-between' }}>
+			<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
 				<Text
 					style={{
 						fontSize: 18,
 						fontWeight: 500,
 						color: COLORS.black_ligth,
+						marginBottom: 30,
 					}}
 				>
 					Votre état actuel
@@ -94,20 +95,7 @@ const BottomSheet = ({ bottomSheetRef }) => {
 					style={styles.headerImg}
 				/>
 			</View>
-			<View style={styles.research_criteria}>
-				<Text
-					style={{
-						fontSize: 17,
-						fontWeight: 500,
-						color: COLORS.placeholder_text_color,
-					}}
-				>
-					Filtre
-				</Text>
-				<Text style={{ fontSize: 15, color: COLORS.black_ligth }}>Douala</Text>
-				<Text style={{ fontSize: 15, color: COLORS.black_ligth }}>à</Text>
-				<Text style={{ fontSize: 15, color: COLORS.black_ligth }}>Yaoundé</Text>
-			</View>
+
 			<View style={styles.total_gain}>
 				<Text
 					style={{
@@ -155,17 +143,16 @@ const BottomSheet = ({ bottomSheetRef }) => {
 
 export default BottomSheet;
 const styles = StyleSheet.create({
-	headerImg:{
-        width: 40,
+	headerImg: {
+		width: 40,
 		height: 40,
-        borderRadius: 5,
-       
-    },
-	research_criteria: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		marginVertical: 5,
+		borderRadius: 5,
 	},
+	// research_criteria: {
+	// 	flexDirection: "row",
+	// 	justifyContent: "space-between",
+	// 	marginVertical: 20,
+	// },
 	total_gain: {
 		flexDirection: "row",
 		justifyContent: "space-between",
@@ -190,6 +177,7 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		right: 0,
 		left: 0,
+		// top:25
 	},
 	btnText: {
 		fontSize: 17,

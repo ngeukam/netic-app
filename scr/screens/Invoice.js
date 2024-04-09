@@ -7,10 +7,10 @@ import {
 	RefreshControl,
 	Platform,
 } from "react-native";
-import React, { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef } from "react";
 import { COLORS } from "../constants";
 import { useFocusEffect } from "@react-navigation/native";
-import Header from "../components/Header";
+import Header4 from "../components/Header4";
 import BottomSheet from "../components/BottomSheet";
 import { AntDesign } from "@expo/vector-icons";
 import { instance } from "../../config";
@@ -20,7 +20,6 @@ export const CARDHEIGHT_J = 130;
 export const PADDING_HORIZONTAL_J = 80;
 const Invoice = () => {
 	const [data, setData] = useState([]);
-	console.log(data[0]);
 	const [load, setLoad] = useState(true);
 	const [loadMore, setLoadMore] = useState(true);
 	const [showLoader, setShowLoader] = useState(true);
@@ -78,8 +77,7 @@ const Invoice = () => {
 		[data]
 	);
 
-	const keyExtractor = useCallback((item) => `${item.id}`);
-
+	const _keyExtractor = useCallback((item, index) => index);
 	const onEndReached = () => {
 		if (loadMore) {
 			handleGetAllInvoices();
@@ -101,7 +99,7 @@ const Invoice = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<Header title="Mes Factures" onPress={() => refRBSheet.current.open()} />
+			<Header4 title="Mes Factures" onPress={() => refRBSheet.current.open()} />
 			{load ? (
 				<View
 					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
@@ -118,7 +116,7 @@ const Invoice = () => {
 				<FlatList
 					data={data}
 					extraData={data}
-					keyExtractor={keyExtractor}
+					keyExtractor={_keyExtractor}
 					renderItem={_renderItem}
 					refreshControl={
 						<RefreshControl

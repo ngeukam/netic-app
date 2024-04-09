@@ -5,7 +5,7 @@ import {
 	createDrawerNavigator,
 } from "@react-navigation/drawer";
 import { COLORS, images } from "../constants";
-import { Ionicons, Feather, AntDesign } from "@expo/vector-icons";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
 import BottomTabNavigation from "./BottomTabNavigation";
 import { Publications, Profile, Jobs, Invoice } from "../screens";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -29,29 +29,14 @@ const DrawerNavigation = () => {
 							}}
 						>
 							<Image
-								source={images.avatar}
+								source={images.logo1}
 								style={{
 									height: 100,
 									width: 100,
 									borderRadius: 50,
-									marginBottom: 12,
 								}}
 							/>
-							<Text
-								style={{
-									fontSize: 18,
-									fontWeight: "bold",
-									color: COLORS.black,
-									marginBottom: 6,
-								}}
-							>
-								{authPhone}
-							</Text>
-							{/* <Text style={{
-                            fontSize: 16,
-                            color: COLORS.black
 
-                        }}>Ingénieur</Text> */}
 							<Pressable
 								onPress={() => {
 									Logout();
@@ -59,12 +44,31 @@ const DrawerNavigation = () => {
 							>
 								<Text
 									style={{
-										fontSize: 16,
-										color: COLORS.black,
+										fontSize: 18,
+										fontWeight: "500",
+										color: COLORS.black_ligth,
 									}}
 								>
-									Déconnexion
+									{authPhone}
 								</Text>
+								<View
+									style={{ flexDirection: "row", justifyContent: "flex-start", marginLeft:15 }}
+								>
+									<Text
+										style={{
+											fontSize: 16,
+											color: COLORS.black,
+											color: COLORS.blue,
+										}}
+									>
+										Déconnexion
+										<Ionicons
+											name="log-in-outline"
+											size={18}
+											color={COLORS.blue}
+										/>
+									</Text>
+								</View>
 							</Pressable>
 						</View>
 						<DrawerItemList {...props} />

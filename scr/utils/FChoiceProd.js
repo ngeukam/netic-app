@@ -20,5 +20,13 @@ export default function FChoiceProd(x) {
 		return images.medicine;
 	} else if (x == 10) {
 		return images.blood_tube;
+	} else if (x == 11) {
+		return images.baggages;
+	} else if (x == 12) {
+		return images.garbage;
+	} else if (x == 13) {
+		return images.car;
+	} else if (x == 14) {
+		return images.material;
 	}
 }

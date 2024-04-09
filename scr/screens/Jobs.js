@@ -7,16 +7,15 @@ import {
 	ActivityIndicator,
 	Platform,
 } from "react-native";
-import React, { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback } from "react";
 import { COLORS } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
-import Header from "../components/Header";
+import Header4 from "../components/Header4";
 import BottomSheet from "../components/BottomSheet";
 import JobsListItem from "../components/JobsListItem";
 import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 import { instance } from "../../config";
 const Jobs = () => {
-	// const isfocused = useIsFocused();
 	const refRBSheet = useRef();
 	const [refreshing, setRefreshing] = useState(false);
 	const [data, setData] = useState([]);
@@ -73,14 +72,13 @@ const Jobs = () => {
 					devise={item?.order?.devise}
 					paid_amount={item?.order?.paid_amount}
 					reference={item?.order?.reference}
-					updated_at={item?.accepted_at}
+					created_at={item?.created_at}
 				/>
 			);
 		},
 		[data]
 	);
-	const keyExtractor = useCallback((item) => `${item?.order?.id}`);
-
+	const _keyExtractor = useCallback((item, index) => index);
 	const onEndReached = () => {
 		if (loadMore) {
 			handleGetAllUserPublications();
@@ -102,7 +100,7 @@ const Jobs = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<Header title="Mes Jobs" onPress={() => refRBSheet.current.open()} />
+			<Header4 title="Mes Jobs" onPress={() => refRBSheet.current.open()} />
 			{load ? (
 				<View
 					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
@@ -119,7 +117,7 @@ const Jobs = () => {
 				<FlatList
 					data={data}
 					extraData={data}
-					keyExtractor={keyExtractor}
+					keyExtractor={_keyExtractor}
 					renderItem={_renderItem}
 					refreshControl={
 						<RefreshControl

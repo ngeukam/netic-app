@@ -9,17 +9,19 @@ import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "../context/AuthContext";
 import "core-js/stable/atob";
 import { ToastErrorMessage } from "./ToastErrorMessage";
+import { ToastSuccessMessage } from "./ToastSuccessMessage";
 
 const SwButton = ({ id, reference }) => {
 	const navigation = useNavigation();
 	const { userToken } = useContext(AuthContext);
 	const { user_id } = jwtDecode(userToken, { playload: true });
-	const [swip, setSwip] = useState(false);
+	let swip = true;
 	const handleAcceptJob = async () => {
 		await instance
 			.post(`job`, { order: id, user: user_id })
 			.then(() => {
-				setSwip(true);
+				// setSwip(true);
+				ToastSuccessMessage(`Vous venez d'accepter le job ${reference}, contacter l'emmeteur.`)
 				navigation.navigate("Job_Details", { ref: reference, id: id });
 			})
 			.catch((error) => {
@@ -28,7 +30,7 @@ const SwButton = ({ id, reference }) => {
 				}
 			})
 			.finally(() => {
-				setSwip(true);
+				// setSwip(true);
 			});
 	};
 	return (
@@ -40,7 +42,7 @@ const SwButton = ({ id, reference }) => {
 				borderRadius={13}
 				iconContainerStyle={{ backgroundColor: COLORS.red }}
 				completeThresholdPercentage={95}
-				goBackToStart={swip ? true : false}
+				goBackToStart={swip}
 				underlayContainerGradientProps={{
 					colors: [COLORS.red, COLORS.blue_light],
 					start: [0, 0.5],

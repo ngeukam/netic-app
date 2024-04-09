@@ -17,12 +17,20 @@ const PublicationListItem = ({
 	budget,
 	devise,
 	job_status,
-	updated_at,
+	created_at,
+	is_paid,
 }) => {
 	const navigation = useNavigation();
 	return (
 		<Pressable
-			onPress={() => navigation.navigate("Details", { ref: reference, id:id })}
+			onPress={() =>
+				navigation.navigate("Details", {
+					ref: reference,
+					id: id,
+					job_status: job_status,
+					is_paid: is_paid,
+				})
+			}
 			style={styles.container}
 		>
 			{/* PRODUCT AND ADDRESS CONTAINER */}
@@ -47,7 +55,6 @@ const PublicationListItem = ({
 			{/* END PRODUCT AND ADDRESS CONTAINER */}
 			{/* PRICE, COM, DATE */}
 			<View style={styles.job_container}>
-
 				{job_status ? (
 					<Text style={styles.jobstatus1}>Job</Text>
 				) : (
@@ -71,7 +78,7 @@ const PublicationListItem = ({
 							fontSize: 14,
 						}}
 					>
-						{moment(updated_at).startOf("minutes").fromNow()}
+						{moment(created_at).startOf("minutes").fromNow()}
 					</Text>
 				</View>
 			</View>

@@ -28,7 +28,7 @@ const AppNavigation = () => {
 	} else {
 		return (
 			<NavigationContainer>
-				{userToken !== null ? (
+				{userToken? (
 					<AppStack />
 				) : (
 					<AuthStack />

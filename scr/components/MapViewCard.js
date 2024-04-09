@@ -1,9 +1,6 @@
-import { View, Text, StyleSheet, Dimensions, Platform } from "react-native";
+import { View, StyleSheet, Dimensions, Platform } from "react-native";
 import React from "react";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { SIZES } from "../constants";
-
-let HEIGHT_SCREEN = Dimensions.get("window").height;
 const MapViewCard = () => {
 	const { width, height } = Dimensions.get("window");
 	const ASPECT_RATIO = width / height;
@@ -14,13 +11,13 @@ const MapViewCard = () => {
 			<MapView
 				style={styles.map}
 				initialRegion={{
-					latitude: 3.844119,
-					longitude: 11.501346,
+					latitude: 3.86667,
+					longitude: 11.51667,
 					latitudeDelta: LATITUDE_DELTA,
 					longitudeDelta: LONGITUDE_DELTA,
 				}}
 				provider={PROVIDER_GOOGLE}
-				showsUserLocation
+				showsUserLocation={true}
 				showsMyLocationButton
 			/>
 		</View>
@@ -40,6 +37,8 @@ const styles = StyleSheet.create({
 		...Platform.select({
 			ios: {
 				flex: 1,
+				width: Dimensions.get("window").width - 20,
+				height: Dimensions.get("window").height,
 			},
 			android: {
 				// bottom: Dimensions.get("window").height/6,

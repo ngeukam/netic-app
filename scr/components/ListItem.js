@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import React from "react";
 import moment from "moment";
-import { COLORS } from "../constants";
+import { COLORS, images } from "../constants";
 import ProgressiveImage from "./ProgressiveImage";
 import SwButton from "./SwipeButton";
 import FChoiceProd from "../utils/FChoiceProd";
@@ -19,7 +19,7 @@ const ListItem = ({
 	vehicule,
 	budget,
 	devise,
-	updated_at,
+	created_at,
 	message,
 }) => {
 	return (
@@ -38,6 +38,9 @@ const ListItem = ({
 					<Text numberOfLines={1} style={{ fontSize: 16 }}>
 						De {departure_place}{" "}
 					</Text>
+					<View>
+						<Image source={images.location} style={{ width: 30, height: 30 }} />
+					</View>
 					<Text numberOfLines={1} style={{ fontSize: 16 }}>
 						À {arrival_place}{" "}
 					</Text>
@@ -59,7 +62,7 @@ const ListItem = ({
 							color: COLORS.black_ligth,
 						}}
 					>
-						{currencyFormat(budget, devise )}
+						{budget && currencyFormat(budget, devise)}
 					</Text>
 				</View>
 				<View style={styles.vehicule}>
@@ -69,7 +72,7 @@ const ListItem = ({
 					/>
 				</View>
 				<Text style={{ fontSize: 14, marginRight: 5 }}>
-					  {moment(updated_at).startOf('minutes').fromNow()}
+					{moment(created_at).startOf("minutes").fromNow()}
 				</Text>
 			</View>
 			{/* MESSAGE CONTAINER */}
@@ -123,13 +126,13 @@ const styles = StyleSheet.create({
 	},
 	address: {
 		marginRight: -PADDING_HORIZONTAL + 5,
-		rowGap: 30,
+		// rowGap: 30,
 	},
 	qty_price: {
 		rowGap: 35,
 		marginLeft: 5,
 	},
-	vehicule: { },
+	vehicule: {},
 
 	budget_vehicule_container: {
 		flexDirection: "row",

@@ -1,13 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
 	StyleSheet,
 	SafeAreaView,
 	View,
 	Text,
-	Pressable,
 	TextInput,
-	Image,
-	Alert,
 } from "react-native";
 import Header3 from "../../components/Header3";
 import { COLORS } from "../../constants";
@@ -19,6 +16,7 @@ import * as SecureStore from "expo-secure-store";
 import { AuthContext } from "../../context/AuthContext";
 import { instance } from "../../../config";
 import { ToastErrorMessage } from "../../components/ToastErrorMessage";
+import { Feather } from "@expo/vector-icons";
 const Register = () => {
 	const navigation = useNavigation();
 	const { Login } = useContext(AuthContext);
@@ -40,6 +38,13 @@ const Register = () => {
 	const DeleteKey = async (key) => {
 		await SecureStore.deleteItemAsync(key);
 	};
+	// State variable to track password visibility
+	const [showPassword, setShowPassword] = useState(false);
+
+	// Function to toggle the password visibility state
+	const toggleShowPassword = () => {
+		setShowPassword(!showPassword);
+	};
 
 	useEffect(() => {
 		GetPhoneStore("PhoneStore");
@@ -47,8 +52,8 @@ const Register = () => {
 	const validatePassword = (input) => {
 		setForm({ ...form, password: input });
 		let newSuggestions = [];
-		if (input?.length < 8) {
-			newSuggestions.push("Le mot de passe doit avoir au moins 8 caractéres");
+		if (input?.length < 6) {
+			newSuggestions.push("Doit avoir au moins 6 caractéres");
 		}
 		if (!/\d/.test(input)) {
 			newSuggestions.push("Ajouter au moins un chiffre");
@@ -79,7 +84,9 @@ const Register = () => {
 	};
 	const handleSubmitRegister = async () => {
 		if (form.name === "" || form.password === "") {
-			ToastErrorMessage("Tous les champs sont obligatoires!");
+			ToastErrorMessage("Tous les champs sont obligatoires.");
+		} else if (strength !== "Very Strong") {
+			ToastErrorMessage("Votre mot de passe est assez simple.");
 		} else {
 			setRegisterBol(true);
 			await instance
@@ -100,15 +107,15 @@ const Register = () => {
 	};
 	return (
 		<SafeAreaView style={styles.container}>
-			<View
-				style={{
-					alignItems: "center",
-					paddingTop: 30,
-				}}
-			>
-				<Header3 />
-			</View>
 			<KeyboardAwareScrollView>
+				<View
+					style={{
+						alignItems: "center",
+						paddingTop: 30,
+					}}
+				>
+					<Header3 />
+				</View>
 				<View style={styles.header}>
 					<View style={{ flexDirection: "row" }}>
 						<Text style={styles.title}>Création de compte</Text>
@@ -126,7 +133,6 @@ const Register = () => {
 							placeholderTextColor="#6b7280"
 							style={styles.inputControl}
 							value={form.name}
-							autoFocus={true}
 						/>
 					</View>
 
@@ -142,20 +148,30 @@ const Register = () => {
 								))}
 							</Text>
 						)}
-						<TextInput
-							autoCorrect={false}
-							onChangeText={(input) => validatePassword(input)}
-							placeholder="********"
-							placeholderTextColor="#6b7280"
-							style={styles.inputControl}
-							secureTextEntry={true}
-							value={form.password}
+						<PasswordStrength
+							strength={strength}
+							strengthMeterStyle={styles.strengthMeter}
 						/>
+						<View style={styles.containerPassEye}>
+							<TextInput
+								autoCorrect={false}
+								onChangeText={(input) => validatePassword(input)}
+								placeholder="********"
+								placeholderTextColor="#6b7280"
+								style={styles.inputControl2}
+								secureTextEntry={!showPassword}
+								value={form.password}
+								autoFocus={true}
+							/>
+							<Feather
+								name={showPassword ? "eye-off" : "eye"}
+								size={24}
+								color="#aaa"
+								style={styles.icon}
+								onPress={toggleShowPassword}
+							/>
+						</View>
 					</View>
-					<PasswordStrength
-						strength={strength}
-						strengthMeterStyle={styles.strengthMeter}
-					/>
 				</View>
 			</KeyboardAwareScrollView>
 			<Button
@@ -168,13 +184,7 @@ const Register = () => {
 				ioconsize={25}
 				ioconcolor={COLORS.white}
 				activityIndicator={registerbol ? true : false}
-				disabled={
-					(strength === "Very Strong" && form.name != "") || !registerbol
-						? false
-						: registerbol
-						? true
-						: false
-				}
+				disabled={registerbol ? true : false}
 			/>
 		</SafeAreaView>
 	);
@@ -211,7 +221,6 @@ const styles = StyleSheet.create({
 	},
 	btncontainer: {
 		paddingHorizontal: 24,
-		// paddingTop:10
 	},
 	/** Form */
 	form: {
@@ -251,15 +260,38 @@ const styles = StyleSheet.create({
 		},
 		elevation: 4,
 	},
+	inputControl2: {
+		flex: 1,
+		paddingVertical: 10,
+		paddingRight: 10,
+		fontSize: 15,
+		backgroundColor: COLORS.white,
+		borderRadius: 12,
+	},
+	containerPassEye: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: COLORS.white,
+		borderRadius: 12,
+		paddingHorizontal: 16,
+		shadowColor: "black",
+		shadowOpacity: 0.2,
+		shadowOffset: {
+			height: 2,
+			width: -2,
+		},
+		elevation: 4,
+	},
 	strengthMeter: {
 		width: "100%",
-		height: 10,
+		height: 5,
 		backgroundColor: "#ccc",
 		borderRadius: 10,
 		overflow: "hidden",
 	},
 	suggestionsText: {
-		color: COLORS.black_ligth,
+		color: COLORS.red,
 	},
 
 	/** Button */

@@ -18,7 +18,7 @@ const JobsListItem = ({
 	paid_amount,
 	budget,
 	devise,
-	updated_at,
+	created_at,
 }) => {
 	const navigation = useNavigation();
 	return (
@@ -75,7 +75,7 @@ const JobsListItem = ({
 							fontSize: 12,
 						}}
 					>
-						{moment(updated_at).startOf('minutes').fromNow()}
+						{moment(created_at).startOf('minutes').fromNow()}
 					</Text>
 				</View>
 			</View>

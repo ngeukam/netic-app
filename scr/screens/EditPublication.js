@@ -1,5 +1,6 @@
 import {
 	View,
+	Text,
 	SafeAreaView,
 	StyleSheet,
 	Platform,
@@ -9,7 +10,6 @@ import {
 } from "react-native";
 import { useState, useContext, useEffect, useRef } from "react";
 import { COLORS } from "../constants";
-import Header2 from "../components/Header2";
 import SelectProductField from "../components/SelectProductField";
 import SelectVehiculeField from "../components/SelectVehiculeField";
 import InputField from "../components/InputField";
@@ -20,13 +20,14 @@ import { instance } from "../../config";
 import { ToastSuccessMessage } from "../components/ToastSuccessMessage";
 import { ToastErrorMessage } from "../components/ToastErrorMessage";
 import { AuthContext } from "../context/AuthContext";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import GooglePlacesDepartureInput from "../components/GooglePlacesDepartureInput";
 import GoogleArrivalPlacesInput from "../components/GoogleArrivalPlacesInput";
 
-const CreatePublication = () => {
+const EditPublication = ({ route }) => {
 	const GooglePlaceRef = useRef(null);
 	const GoogleArrivalRef = useRef(null);
+	const navigation = useNavigation();
 	const focused = useIsFocused();
 	const { userId } = useContext(AuthContext);
 	const [load, setLoad] = useState(false);
@@ -58,23 +59,23 @@ const CreatePublication = () => {
 		long_departure_place: long_departure_place,
 	};
 	useEffect(() => {
-		setArrivalPlace();
-		setBudget();
-		setDeparturePlace();
-		setDevise("1");
-		setMessage();
-		setProduct();
-		setQuantity();
-		setVehicule();
-		setLatArrivalPlace();
-		setLatDeparturePlace();
-		setLongArrivalPlace();
-		setLongArrivalPlace();
-		GooglePlaceRef.current?.setAddressText("");
-		GoogleArrivalRef.current?.setAddressText("");
+		setArrivalPlace(route.params?.arrival_place);
+		setBudget(JSON.stringify(route.params?.budget));
+		setDeparturePlace(route.params?.departure_place);
+		setDevise(JSON.stringify(route.params?.devise));
+		setMessage(route.params?.message);
+		setProduct(JSON.stringify(route.params?.product));
+		setQuantity(JSON.stringify(route.params?.quantity));
+		setVehicule(JSON.stringify(route.params?.vehicule));
+		setLatDeparturePlace(JSON.stringify(route.params?.lat_departure_place));
+		setLongDeparturePlace(JSON.stringify(route.params?.long_departure_place));
+		setLatArrivalPlace(route.params?.lat_arrival_place);
+		setLongArrivalPlace(route.params?.long_arrival_place);
+		GooglePlaceRef.current?.setAddressText(route.params?.departure_place);
+		GoogleArrivalRef.current?.setAddressText(route.params?.arrival_place);
 	}, [focused]);
-
-	const handleCreatePublication = async () => {
+	console.log(route.params?.is_paid)
+	const handleEditPublication = async () => {
 		if (!product || !quantity || !vehicule || !budget) {
 			ToastErrorMessage("Vous avez laissé des champs vides.");
 		} else if (
@@ -84,28 +85,18 @@ const CreatePublication = () => {
 			!long_departure_place
 		) {
 			ToastErrorMessage("Vous devez préciser les lieux.");
+		}
+		if (route.params?.is_paid) {
+			ToastErrorMessage(
+				"Désolé, cette demande est facturée, elle ne peut être modifiée."
+			);
 		} else {
 			setLoad(true);
 			await instance
-				.post(`order/`, formData)
+				.put(`order/${route.params?.id}`, formData)
 				.then(() => {
-					setArrivalPlace();
-					setBudget();
-					setDeparturePlace();
-					setDevise("1");
-					setMessage();
-					setProduct();
-					setQuantity();
-					setVehicule();
-					setLatArrivalPlace();
-					setLatDeparturePlace();
-					setLongArrivalPlace();
-					setLongArrivalPlace();
-					GooglePlaceRef.current?.setAddressText("");
-					GoogleArrivalRef.current?.setAddressText("");
-					ToastSuccessMessage(
-						"Votre demande est maintentant visible dans le réseau."
-					);
+					ToastSuccessMessage("Votre demande a été modifiée avec succés.");
+					navigation.navigate("Publications");
 				})
 				.finally(() => {
 					setLoad(false);
@@ -113,19 +104,16 @@ const CreatePublication = () => {
 		}
 	};
 	const handleonPressDeparture = (data, details = null) => {
-		// setDeparturePlace(JSON.stringify(data?.description));
 		setLatDeparturePlace(JSON.stringify(details?.geometry?.location?.lat));
 		setLongDeparturePlace(JSON.stringify(details?.geometry?.location?.lng));
 	};
 	const handleonPressArrival = (data, details = null) => {
-		// setArrivalPlace(JSON.stringify(data?.description));
 		setLatArrivalPlace(JSON.stringify(details?.geometry?.location?.lat));
 		setLongArrivalPlace(JSON.stringify(details?.geometry?.location?.lng));
 	};
 	return (
 		<SafeAreaView style={styles.container}>
-			<Header2 title="Créer une demande" />
-
+			{/* <Header2 title="Modification de la demande" /> */}
 			<KeyboardAvoidingView
 				nestedScrollEnabled={true}
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -206,6 +194,7 @@ const CreatePublication = () => {
 										keyboardType="numeric"
 										style={[styles.inputControl, styles.budgetupstyle]}
 										value={budget}
+										readOnly={route.params?.job_status ? true : false}
 										onChangeText={setBudget}
 									/>
 									<SelectDeviseField value={devise} setValue={setDevise} />
@@ -223,8 +212,8 @@ const CreatePublication = () => {
 									borderRadius: 10,
 									paddingHorizontal: 10,
 									color: COLORS.black_ligth,
-									fontSize: 16,
-									fontWeight: "400",
+									fontSize: 15,
+									fontWeight: "500",
 									paddingHorizontal: 16,
 									flex: 1,
 								}}
@@ -237,12 +226,12 @@ const CreatePublication = () => {
 						<View style={{ flexDirection: "row" }}>
 							<Button
 								onPress={() => {
-									handleCreatePublication();
+									handleEditPublication();
 								}}
 								style1={styles.formAction}
 								style2={styles.btn}
 								style3={styles.btnText}
-								buttontext={"Publiez la demande"}
+								buttontext={"Modifiez la demande"}
 								activityIndicator={load ? true : false}
 								disabled={load ? true : false}
 							/>
@@ -263,12 +252,12 @@ const CreatePublication = () => {
 	);
 };
 
-export default CreatePublication;
+export default EditPublication;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: COLORS.white,
-		paddingTop: 30,
+		paddingTop: 20,
 		zIndex: 0,
 	},
 

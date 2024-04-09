@@ -9,20 +9,18 @@ import {
 	Image,
 	ActivityIndicator,
 } from "react-native";
-import React, { useState, useEffect } from "react";
-import { COLORS, icons, images } from "../constants";
+import { useState, useEffect } from "react";
+import { COLORS } from "../constants";
 import Button from "../components/Button";
 import { Feather } from "@expo/vector-icons";
 import { instance } from "../../config";
 import currencyFormat from "../utils/CurrencyFormat";
 import FChoiceProd from "../utils/FChoiceProd";
 import FChoiceVehicule from "../utils/FChoiceVehicule";
+import FProdName from "../utils/FProdName";
 import moment from "moment";
-import { ToastSuccessMessage } from "../components/ToastSuccessMessage";
-import { useNavigation } from "@react-navigation/native";
 
 const Details_2 = ({ route }) => {
-	const navigation = useNavigation();
 	const [data, setData] = useState([]);
 	const [load, setLoad] = useState(true);
 	const [userphone, setUserPhone] = useState();
@@ -33,14 +31,21 @@ const Details_2 = ({ route }) => {
 			Linking.openURL(`tel:${phone}`);
 		}
 	};
-	openGps = (latitude = 4.0429408, longitude = 9.706203) => {
-		const location = `${latitude},${longitude}`;
-		const url = Platform.select({
-			ios: `maps:${location}`,
-			android: `geo:${location}?center=${location}&q=${location}&z=16`,
+	async function openMap(latitude, longitude, label = "MyLabel") {
+		const tag = `${Platform.OS === "ios" ? "maps" : "geo"}:0,0?q=`;
+		const link = Platform.select({
+			ios: `${tag}${label}@${latitude},${longitude}`,
+			android: `${tag}${latitude},${longitude}(${label})`,
 		});
-		Linking.openURL(url);
-	};
+
+		try {
+			const supported = await Linking.canOpenURL(link);
+
+			if (supported) Linking.openURL(link);
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	const handleGetUserPhone = async (id) => {
 		await instance.get(`user-phone/${id}`).then((response) => {
@@ -54,12 +59,14 @@ const Details_2 = ({ route }) => {
 			setLoad(false);
 		});
 	};
-	const handlePublishOrder = async () => {
-		await instance.put(`job/${data?.accepted[0]?.order}`).then(() => {
-			ToastSuccessMessage("Le job est actuellement visble dans le réseau.");
-			navigation.navigate("Jobs");
-		});
-	};
+	// const handlePublishOrder = async () => {
+	// 	setLoad(true);
+	// 	await instance.put(`job/${data?.accepted[0]?.order}`).then(() => {
+	// 		ToastSuccessMessage("Le job est de nouveau visible dans le réseau.");
+	// 		navigation.goBack();
+	// 		setLoad(false);
+	// 	});
+	// };
 	useEffect(() => {
 		handleGetOrderDetails();
 	}, []);
@@ -113,9 +120,19 @@ const Details_2 = ({ route }) => {
 								justifyContent: "space-between",
 							}}
 						>
-							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
-								À transporter
-							</Text>
+							<View style={{flexDirection:'column'}}>
+								<Text
+									style={[
+										styles.inputLabel,
+										{ fontWeight: 500, color: COLORS.placeholder_text_color },
+									]}
+								>
+									À transporter
+								</Text>
+								<Text style={styles.inputLabel} >
+									{FProdName(data.product)}
+								</Text>
+							</View>
 							{
 								<Image
 									source={FChoiceProd(data.product)}
@@ -130,28 +147,45 @@ const Details_2 = ({ route }) => {
 									styles.inputLabel,
 									{
 										fontWeight: 500,
-										// flexDirection: "row",
+										color: COLORS.placeholder_text_color,
 									},
 								]}
 							>
 								Lieu de recupération
 								<Feather
-									name="arrow-up-circle"
+									name="map-pin"
 									size={24}
-									color={COLORS.black_ligth}
-									onPress={openGps}
+									color={COLORS.blue}
+									onPress={() => {
+										openMap(
+											data.lat_departure_place,
+											data.long_departure_place,
+											`Lieu de récup ${data.departure_place}`
+										);
+									}}
 								/>
 							</Text>
 							<Text style={styles.inputLabel}>{data.departure_place}</Text>
 						</View>
 						<View style={{ flexDirection: "col" }}>
-							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+							<Text
+								style={[
+									styles.inputLabel,
+									{ fontWeight: 500, color: COLORS.placeholder_text_color },
+								]}
+							>
 								Lieu d'arrivé
 								<Feather
-									name="arrow-down-circle"
+									name="map-pin"
 									size={24}
-									color={COLORS.black_ligth}
-									onPress={openGps}
+									color={COLORS.red}
+									onPress={() => {
+										openMap(
+											data.lat_arrival_place,
+											data.long_arrival_place,
+											`Lieu de livraison ${data.arrival_place}`
+										);
+									}}
 								/>
 							</Text>
 							<Text style={styles.inputLabel}>{data.arrival_place}</Text>
@@ -163,7 +197,12 @@ const Details_2 = ({ route }) => {
 								justifyContent: "space-between",
 							}}
 						>
-							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+							<Text
+								style={[
+									styles.inputLabel,
+									{ fontWeight: 500, color: COLORS.placeholder_text_color },
+								]}
+							>
 								Quantité/Nombre
 							</Text>
 							<Text style={styles.inputLabel}>{data.quantity}</Text>
@@ -175,11 +214,16 @@ const Details_2 = ({ route }) => {
 								justifyContent: "space-between",
 							}}
 						>
-							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+							<Text
+								style={[
+									styles.inputLabel,
+									{ fontWeight: 500, color: COLORS.placeholder_text_color },
+								]}
+							>
 								Budget prévu
 							</Text>
-							<Text style={styles.inputLabel}>
-								{currencyFormat(data.budget, data.devise)}
+							<Text style={[styles.inputLabel, { fontWeight: "500" }]}>
+								{data.budget && currencyFormat(data.budget, data.devise)}
 							</Text>
 						</View>
 
@@ -190,7 +234,12 @@ const Details_2 = ({ route }) => {
 								justifyContent: "space-between",
 							}}
 						>
-							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+							<Text
+								style={[
+									styles.inputLabel,
+									{ fontWeight: 500, color: COLORS.placeholder_text_color },
+								]}
+							>
 								Véhicule souhaité
 							</Text>
 							<Image
@@ -201,7 +250,12 @@ const Details_2 = ({ route }) => {
 
 						{data.message && (
 							<View style={{ flexDirection: "col" }}>
-								<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
+								<Text
+									style={[
+										styles.inputLabel,
+										{ fontWeight: 500, color: COLORS.placeholder_text_color },
+									]}
+								>
 									Message
 								</Text>
 								<Text style={[styles.inputLabel]} numberOfLines={2}>
@@ -216,16 +270,23 @@ const Details_2 = ({ route }) => {
 								justifyContent: "space-between",
 							}}
 						>
-							<Text style={[styles.inputLabel, { fontWeight: 500 }]}>
-								Date de publication
+							<Text
+								style={[
+									styles.inputLabel,
+									{ fontWeight: 500, color: COLORS.placeholder_text_color },
+								]}
+							>
+								Date de création
 							</Text>
 							<Text>
-								{moment(data.updated_at).startOf("minutes").fromNow()}
+								{moment(data?.accepted[0]?.created_at)
+									.startOf("minutes")
+									.fromNow()}
 							</Text>
 						</View>
 					</View>
 
-					<View
+					{/* <View
 						style={{
 							flexDirection: "row",
 							justifyContent: "center",
@@ -235,15 +296,14 @@ const Details_2 = ({ route }) => {
 					>
 						<Button
 							buttontext="Annuler"
-							style3={styles.stylecallbuttontext}
+							style3={styles.stylecancelbuttontext}
 							style2={styles.stylepubbuttoncontainer}
-							ioconname={'ban'}
+							ioconname={"ban"}
 							ioconsize={22}
 							ioconcolor={COLORS.white}
 							style5={{ height: 27, width: 25 }}
-							onPress={handlePublishOrder}
 						/>
-					</View>
+					</View> */}
 				</ScrollView>
 			</SafeAreaView>
 		);
@@ -269,13 +329,20 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		marginRight: 5,
 	},
+	stylecancelbuttontext: {
+		fontSize: 17,
+		lineHeight: 24,
+		fontWeight: "600",
+		color: COLORS.white,
+		textAlign: "center",
+	},
 	stylecallbuttoncontainer: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
 		borderRadius: 8,
 		paddingVertical: 8,
-		paddingHorizontal: 20,
+		// paddingHorizontal: 20,
 		borderWidth: 1,
 		backgroundColor: COLORS.blue,
 		borderColor: COLORS.blue,
@@ -287,7 +354,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		borderRadius: 8,
 		paddingVertical: 3,
-		paddingHorizontal: 2,
 		borderWidth: 1,
 		backgroundColor: COLORS.red,
 		borderColor: COLORS.red,

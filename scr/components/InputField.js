@@ -9,7 +9,10 @@ const InputField = ({
 	onChangeText,
 	value,
 	numberOfLines,
+	readOnly,
 	style,
+	autoFocus,
+	secureTextEntry
 }) => {
 	return (
 		<TextInput
@@ -20,7 +23,10 @@ const InputField = ({
 			placeholderTextColor={COLORS.placeholder_text_color}
 			style={style}
 			value={value}
+			readOnly={readOnly}
 			numberOfLines={numberOfLines}
+			autoFocus={autoFocus}
+			secureTextEntry={secureTextEntry}
 		/>
 	);
 };

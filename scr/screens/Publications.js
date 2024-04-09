@@ -7,9 +7,9 @@ import {
 	Platform,
 	ActivityIndicator,
 } from "react-native";
-import React, { useRef, useCallback, useState } from "react";
+import { useRef, useCallback, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import Header from "../components/Header";
+import Header4 from "../components/Header4";
 import BottomSheet from "../components/BottomSheet";
 import PublicationListItem from "../components/PublicationListItem";
 import { COLORS, icons } from "../constants";
@@ -78,14 +78,14 @@ const Publications = () => {
 					devise={item?.devise}
 					reference={item?.reference}
 					job_status={item?.accepted[0]?.job_status}
-					updated_at={item?.updated_at}
+					created_at={item?.created_at}
+					is_paid={item?.is_paid}
 				/>
 			);
 		},
 		[data]
 	);
-	const keyExtractor = useCallback((item) => `${item.id}`);
-
+	const _keyExtractor = useCallback((item, index) => index);
 	const onEndReached = () => {
 		if (loadMore) {
 			handleGetAllUserPublications();
@@ -107,7 +107,7 @@ const Publications = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<Header title="Mes demandes" onPress={() => refRBSheet.current.open()} />
+			<Header4 title="Mes demandes" onPress={() => refRBSheet.current.open()} />
 			{load ? (
 				<View
 					style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
@@ -124,7 +124,7 @@ const Publications = () => {
 				<FlatList
 					data={data}
 					extraData={data}
-					keyExtractor={keyExtractor}
+					keyExtractor={_keyExtractor}
 					renderItem={_renderItem}
 					refreshControl={
 						<RefreshControl

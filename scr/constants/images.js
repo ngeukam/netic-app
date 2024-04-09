@@ -18,6 +18,16 @@ const tricycle = require("../../assets/images/tricycle.png");
 const airplane = require("../../assets/images/airplane.png");
 const default_img = require("../../assets/images/default_img.png");
 const logo1 = require("../../assets/images/logo1.png");
+const garbage = require("../../assets/images/garbage.png");
+const car = require("../../assets/images/car.png");
+const bike = require("../../assets/images/bike.png");
+const wheelbarrow = require("../../assets/images/wheelbarrow.png");
+const location = require("../../assets/images/location.png");
+const bus =  require("../../assets/images/bus.png");
+const material =  require("../../assets/images/material.png");
+const fourgon =  require("../../assets/images/fourgon.png");
+const train =  require("../../assets/images/train.png");
+
 // SplashScreen Animation
 const delivery_anim = require("../../assets/jsonanimation/delivery.json");
 const taxi_anim = require("../../assets/jsonanimation/taxi.json");
@@ -26,6 +36,11 @@ const truck_anim = require("../../assets/jsonanimation/truck-.json");
 export default {
 	avatar,
 	baggages,
+	garbage,
+	car,
+	bike,
+	wheelbarrow,
+	location,
 	carton,
 	documents,
 	food,
@@ -47,4 +62,8 @@ export default {
 	taxi_anim,
 	default_img,
     logo1,
+	bus,
+	fourgon,
+	material,
+	train
 };

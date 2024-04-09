@@ -1,16 +1,12 @@
 import { View, Text, Image, Platform, Animated } from "react-native";
 import React from "react";
-import {
-	createBottomTabNavigator
-} from "@react-navigation/bottom-tabs";
-import { Home, Message, Profile, CreatePublication, Search } from "../screens";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Home, Profile, CreatePublication } from "../screens";
 import { COLORS, icons } from "../constants";
-import { Ionicons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-
 
 export const screenOptions = {
 	tabBarShowLabel: false,
@@ -25,7 +21,6 @@ export const screenOptions = {
 		borderTopLeftRadius: 13,
 		height: Platform.OS === "ios" ? 90 : 60,
 		backgroundColor: COLORS.gray,
-		// COLORS.gray
 		borderColor: COLORS.white,
 	},
 	tabBarHideOnKeyboard: true,
@@ -60,22 +55,8 @@ const BottomTabNavigation = () => {
 									height: 26,
 									width: 26,
 									tintColor: focused ? COLORS.red : COLORS.black,
+									marginRight: 60,
 								}}
-							/>
-						);
-					},
-				}}
-			/>
-			<Tab.Screen
-				name="Search"
-				component={Search}
-				options={{
-					tabBarIcon: ({ focused }) => {
-						return (
-							<Ionicons
-								name={focused ? "search" : "search"}
-								size={26}
-								color={focused ? COLORS.red : COLORS.black}
 							/>
 						);
 					},
@@ -91,7 +72,7 @@ const BottomTabNavigation = () => {
 								style={{
 									alignItems: "center",
 									justifyContent: "center",
-									backgroundColor: COLORS.red,
+									backgroundColor: focused ? COLORS.red : COLORS.blue,
 									height: Platform.OS === "ios" ? 60 : 50,
 									width: Platform.OS === "ios" ? 90 : 80,
 									// top: Platform.OS === "ios" ? -20 : -30,
@@ -116,25 +97,6 @@ const BottomTabNavigation = () => {
 			/>
 
 			<Tab.Screen
-				name="Message"
-				component={Profile}
-				options={{
-					tabBarIcon: ({ focused }) => {
-						return (
-							<Image
-								source={focused ? icons.bell : icons.bellOutline}
-								resizeMode="contain"
-								style={{
-									height: 26,
-									width: 26,
-									tintColor: focused ? COLORS.red : COLORS.black,
-								}}
-							/>
-						);
-					},
-				}}
-			/>
-			<Tab.Screen
 				name="Profile"
 				component={Profile}
 				options={{
@@ -147,6 +109,7 @@ const BottomTabNavigation = () => {
 									height: 26,
 									width: 26,
 									tintColor: focused ? COLORS.red : COLORS.black,
+									marginLeft: 60,
 								}}
 							/>
 						);

@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DrawerNavigation from "./DrawerNavigation";
-import { Details, Details_2 } from "../screens";
+import { Details, Details_2, EditPublication, EditProfile } from "../screens";
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +30,22 @@ const AppStack = () => {
 					component={Details_2}
 					options={({ route }) => ({
 						title: "Détails" + " " + route.params?.ref,
+						headerShown: true,
+					})}
+				/>
+				<Stack.Screen
+					name="Edit_Publication"
+					component={EditPublication}
+					options={({ route }) => ({
+						title: "Modification" + " " + route.params?.ref,
+						headerShown: true,
+					})}
+				/>
+				<Stack.Screen
+					name="Edit_Profile"
+					component={EditProfile}
+					options={({ route }) => ({
+						title: "Modification" + " " + route.params?.name,
 						headerShown: true,
 					})}
 				/>

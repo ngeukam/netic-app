@@ -51,4 +51,24 @@ export const ProductsItem = [
 		value: "10",
 		image: images.blood_tube,
 	},
+	{
+		label: "Bagages",
+		value: "11",
+		image: images.baggages,
+	},
+	{
+		label: "Poubelles",
+		value: "12",
+		image: images.garbage,
+	},
+	{
+		label: "Piéces mécanique",
+		value: "13",
+		image: images.car,
+	},
+	{
+		label: "Matériel",
+		value: "14",
+		image: images.material,
+	},
 ];

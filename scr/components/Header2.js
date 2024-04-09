@@ -28,8 +28,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		paddingVertical:10,
 		backgroundColor: COLORS.white,
-		// flex:1,
-		// justifyContent:'center'
+		
 
 	},
 

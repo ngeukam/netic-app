@@ -12,5 +12,15 @@ export default function FChoiceVehicule(x) {
 		return images.tricycle;
 	} else if (x == 6) {
 		return images.airplane;
+	} else if (x == 7) {
+		return images.bike;
+	} else if (x == 8) {
+		return images.wheelbarrow;
+	} else if (x == 9) {
+		return images.bus;
+	} else if (x == 10) {
+		return images.fourgon;
+	} else if (x == 11) {
+		return images.train;
 	}
 }

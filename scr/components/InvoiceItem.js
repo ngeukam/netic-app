@@ -29,8 +29,8 @@ const InvoiceItem = ({
 			<View style={styles.pay_status}>
 				<Text
 					style={{
-						fontSize: 16,
-						fontWeight: "500",
+						fontSize: 17,
+						fontWeight: "400",
 						color: COLORS.red,
 					}}
 				>

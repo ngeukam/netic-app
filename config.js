@@ -5,7 +5,7 @@ import { ToastErrorMessage } from "./scr/components/ToastErrorMessage";
 import { ToastInternetErrorMessage } from "./scr/components/ToastInternetErrorMessage";
 import * as Network from "expo-network";
 
-const localhost = Platform.OS === "android" ? "192.168.43.128" : "127.0.0.1";
+const localhost = Platform.OS === "android" ? "192.168.34.101" : "127.0.0.1";
 export const instance = axios.create({
 	baseURL: `http://${localhost}:8001/api/v1/`,
 });
@@ -42,7 +42,6 @@ instance.interceptors.response.use(
 	async function (error) {
 		const originalRequest = error.config;
 		const { isInternetReachable } = await Network.getNetworkStateAsync();
-		console.log(isInternetReachable);
 		if (error.response?.status === 401 && !originalRequest._retry) {
 			originalRequest._retry = true;
 			const newAccessToken = await refreshToken();
@@ -60,6 +59,7 @@ instance.interceptors.response.use(
 			ToastInternetErrorMessage("Vérifier votre connexion internet.");
 		} else {
 			ToastErrorMessage("Une erreur s'est produite");
+			console.log(error);
 		}
 		return Promise.reject(error);
 	}
@@ -70,3 +70,4 @@ export const generateOTPCode = () => {
 	return Math.floor(1000 + randomNum);
 };
 export const PROJECT_ID = "9e700bb9-2a97-4cf1-85a0-d034eebf6f8a";
+export const API_KEY = "AIzaSyDx8pI33IiRhha1lx6VlUMdlej5vA_ThEc";
