@@ -77,4 +77,4 @@ export const generateOTPCode = () => {
 	return Math.floor(1000 + randomNum);
 };
 export const PROJECT_ID = "9e700bb9-2a97-4cf1-85a0-d034eebf6f8a";
-export const API_KEY = "AIzaSyDx8pI33IiRhha1lx6VlUMdlej5vA_ThEc";
+export const API_KEY = "";
