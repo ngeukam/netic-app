@@ -165,8 +165,9 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		position: "absolute",
-		backgroundColor: "rgba(0, 0, 0, 0.5)",
+		backgroundColor: "rgba(255, 0, 0, 0.5)",
 		right: 30,
 		bottom: 30,
+		
 	},
 });

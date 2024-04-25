@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
 		flexBasis: 0,
 		borderBottomWidth: 55,
 		borderBottomColor: "transparent",
+		paddingTop:20
 	},
 	/** Profile */
 	profile: {

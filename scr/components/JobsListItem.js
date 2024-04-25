@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import React from "react";
 import { COLORS } from "../constants";
 import ProgressiveImage from "./ProgressiveImage";
 import { useNavigation } from "@react-navigation/native";
@@ -23,7 +22,9 @@ const JobsListItem = ({
 	const navigation = useNavigation();
 	return (
 		<Pressable
-			onPress={() => navigation.navigate("Job_Details", {ref:reference, id:id})}
+			onPress={() =>
+				navigation.navigate("Job_Details", { ref: reference, id: id })
+			}
 			style={styles.container}
 		>
 			{/* PRODUCT AND ADDRESS CONTAINER */}
@@ -37,12 +38,18 @@ const JobsListItem = ({
 					<Text style={{ fontSize: 11, marginRight: 15 }}> {reference}</Text>
 				</View>
 				<View style={styles.address}>
-					<Text numberOfLines={1} style={{ fontSize: 16 }}>
-						De {departure_place}{" "}
-					</Text>
-					<Text numberOfLines={1} style={{ fontSize: 16 }}>
-						À {arrival_place}{" "}
-					</Text>
+					<View style={{ flexDirection: "row" }}>
+						<Text style={{ fontSize: 16, fontWeight: "600" }}>De </Text>
+						<Text numberOfLines={1} style={{ fontSize: 16 }}>
+							{departure_place}{" "}
+						</Text>
+					</View>
+					<View style={{ flexDirection: "row" }}>
+						<Text style={{ fontSize: 16, fontWeight: "600" }}>À </Text>
+						<Text numberOfLines={1} style={{ fontSize: 16 }}>
+							{arrival_place}{" "}
+						</Text>
+					</View>
 				</View>
 			</View>
 			{/* END PRODUCT AND ADDRESS CONTAINER */}
@@ -75,7 +82,7 @@ const JobsListItem = ({
 							fontSize: 12,
 						}}
 					>
-						{moment(created_at).startOf('minutes').fromNow()}
+						{moment(created_at).startOf("minutes").fromNow()}
 					</Text>
 				</View>
 			</View>

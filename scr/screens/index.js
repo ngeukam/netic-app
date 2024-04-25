@@ -3,7 +3,6 @@ import Publications from "./Publications";
 import Profile from "./Profile";
 import EditProfile from "./EditProfile";
 import Jobs from "./Jobs";
-import Notifications from "./Notifications";
 import CreatePublication from "./CreatePublication";
 import EditPublication from "./EditPublication";
 import Details from "./Details";
@@ -25,7 +24,6 @@ export {
     Details,
     Details_2,
     Invoice,
-    Notifications,
     Login,
     Otp,
     Register,

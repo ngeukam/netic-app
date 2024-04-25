@@ -42,6 +42,7 @@ const Invoice = () => {
 			handleGetAllInvoices();
 		}, [])
 	);
+	
 	const handleGetAllInvoices = async () => {
 		setLoadMore(true);
 		let query = `?l=${limit}&o=${offset}`;

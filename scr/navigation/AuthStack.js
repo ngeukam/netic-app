@@ -17,7 +17,7 @@ const AuthStack = () => {
 				animationTypeForReplace: "push",
 				animation: "slide_from_right",
 			}}
-			initialRouteName="Login"
+			initialRouteName="Phone"
 			>
 				<Stack.Screen name="Phone" component={Phone} />
 				<Stack.Screen name="Otp" component={Otp} />

@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet, Image } from "react-native";
-import React from "react";
 import moment from "moment";
 import { COLORS, images } from "../constants";
 import ProgressiveImage from "./ProgressiveImage";
@@ -35,15 +34,22 @@ const ListItem = ({
 					<Text style={{ fontSize: 12, marginRight: 15 }}>{reference} </Text>
 				</View>
 				<View style={styles.address}>
-					<Text numberOfLines={1} style={{ fontSize: 16 }}>
-						De {departure_place}{" "}
-					</Text>
+					<View style={{ flexDirection: "row" }}>
+						<Text style={{ fontSize: 16, fontWeight: "600" }}>De </Text>
+						<Text numberOfLines={1} style={{ fontSize: 16 }}>
+							{departure_place}{" "}
+						</Text>
+					</View>
 					<View>
 						<Image source={images.location} style={{ width: 30, height: 30 }} />
 					</View>
-					<Text numberOfLines={1} style={{ fontSize: 16 }}>
-						À {arrival_place}{" "}
-					</Text>
+
+					<View style={{ flexDirection: "row" }}>
+						<Text style={{ fontSize: 16, fontWeight: "600" }}>À </Text>
+						<Text numberOfLines={1} style={{ fontSize: 16 }}>
+							{arrival_place}{" "}
+						</Text>
+					</View>
 				</View>
 			</View>
 			{/* END PRODUCT AND ADDRESS CONTAINER */}
@@ -126,7 +132,6 @@ const styles = StyleSheet.create({
 	},
 	address: {
 		marginRight: -PADDING_HORIZONTAL + 5,
-		// rowGap: 30,
 	},
 	qty_price: {
 		rowGap: 35,

@@ -11,13 +11,14 @@ import {
 	Alert,
 } from "react-native";
 import { useState, useEffect } from "react";
-import { COLORS, icons, images } from "../constants";
+import { COLORS, icons } from "../constants";
 import Button from "../components/Button";
 import { Feather } from "@expo/vector-icons";
 import { instance } from "../../config";
 import currencyFormat from "../utils/CurrencyFormat";
 import FChoiceProd from "../utils/FChoiceProd";
 import FChoiceVehicule from "../utils/FChoiceVehicule";
+import FProdName from "../utils/FProdName";
 import moment from "moment";
 import { ToastSuccessMessage } from "../components/ToastSuccessMessage";
 import { ToastErrorMessage } from "../components/ToastErrorMessage";
@@ -35,7 +36,10 @@ const Details = ({ route }) => {
 		}
 	};
 	const NoPhoneNumber = () => {
-		Alert.alert("Oups", "Bien voloir fair une nouvelle demande pour avoir un coursier.");
+		Alert.alert(
+			"Oups",
+			"Bien voloir fair une nouvelle demande pour avoir un coursier."
+		);
 	};
 	async function openMap(latitude, longitude, label = "MyLabel") {
 		const tag = `${Platform.OS === "ios" ? "maps" : "geo"}:0,0?q=`;
@@ -171,14 +175,17 @@ const Details = ({ route }) => {
 								justifyContent: "space-between",
 							}}
 						>
-							<Text
-								style={[
-									styles.inputLabel,
-									{ fontWeight: 500, color: COLORS.placeholder_text_color },
-								]}
-							>
-								À transporter
-							</Text>
+							<View style={{ flexDirection: "column" }}>
+								<Text
+									style={[
+										styles.inputLabel,
+										{ fontWeight: 500, color: COLORS.placeholder_text_color },
+									]}
+								>
+									À transporter
+								</Text>
+								<Text style={styles.inputLabel}>{FProdName(data.product)}</Text>
+							</View>
 							{
 								<Image
 									source={FChoiceProd(data.product)}
@@ -361,7 +368,7 @@ const Details = ({ route }) => {
 									quantity: data.quantity,
 									vehicule: data.vehicule,
 									budget: data.budget,
-									is_paid:data.is_paid,
+									is_paid: data.is_paid,
 									devise: data.devise,
 									departure_place: data.departure_place,
 									arrival_place: data.arrival_place,

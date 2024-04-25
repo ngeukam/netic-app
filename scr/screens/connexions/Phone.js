@@ -146,8 +146,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignContent: "center",
 		paddingHorizontal: 16,
-		backgroundColor: COLORS.gray,
-		// rowGap: 10,
+		backgroundColor: COLORS.white,
 	},
 	container_phone_error_message: {
 		alignItems: "center",
@@ -205,6 +204,13 @@ const styles = StyleSheet.create({
 		backgroundColor: "#FFF",
 		width: "100%",
 		marginBottom: 16,
+		shadowColor: "black",
+		shadowOpacity: 0.2,
+		shadowOffset: {
+			height: 2,
+			width: -2,
+		},
+		elevation: 4,
 	},
 	codeTextStyle: {
 		fontSize: 17,

@@ -1,24 +1,21 @@
 import { View, StyleSheet } from "react-native";
-import React, { useState, useContext } from "react";
+import { useContext } from "react";
 import { COLORS } from "../constants";
 import { useNavigation } from "@react-navigation/native";
 import { SwipeButton } from "react-native-expo-swipe-button";
 import { Feather } from "@expo/vector-icons";
 import { instance } from "../../config";
-import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "../context/AuthContext";
-import "core-js/stable/atob";
 import { ToastErrorMessage } from "./ToastErrorMessage";
 import { ToastSuccessMessage } from "./ToastSuccessMessage";
 
 const SwButton = ({ id, reference }) => {
 	const navigation = useNavigation();
-	const { userToken } = useContext(AuthContext);
-	const { user_id } = jwtDecode(userToken, { playload: true });
+	const { userId } = useContext(AuthContext);
 	let swip = true;
 	const handleAcceptJob = async () => {
 		await instance
-			.post(`job`, { order: id, user: user_id })
+			.post(`job`, { order: id, user: userId })
 			.then(() => {
 				// setSwip(true);
 				ToastSuccessMessage(`Vous venez d'accepter le job ${reference}, contacter l'emmeteur.`)

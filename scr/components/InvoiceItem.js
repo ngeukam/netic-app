@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet } from "react-native";
-import React from "react";
 import { COLORS } from "../constants";
 import moment from "moment";
 import currencyFormat from "../utils/CurrencyFormat";
@@ -29,9 +28,9 @@ const InvoiceItem = ({
 			<View style={styles.pay_status}>
 				<Text
 					style={{
-						fontSize: 17,
-						fontWeight: "400",
-						color: COLORS.red,
+						fontSize: 16,
+						fontWeight: "500",
+						color: "rgba(255, 0, 0, 0.7)",
 					}}
 				>
 					Reste à payer:{" "}

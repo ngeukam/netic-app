@@ -29,86 +29,87 @@ const Login = () => {
 	};
 	return (
 		<SafeAreaView style={styles.container}>
-			<View
-				style={{
-					alignItems: "center",
-					paddingTop: 30,
-				}}
-			>
-				<Header3 />
-			</View>
-			<KeyboardAwareScrollView>
-				<View style={styles.header}>
-					<View style={{ flexDirection: "row" }}>
-						<Text style={styles.title}>Se Connecter</Text>
-					</View>
-					<Text style={styles.subtitle}>Connectez-vous pour continuer</Text>
+			
+				<View
+					style={{
+						alignItems: "center",
+						paddingTop: 30,
+					}}
+				>
+					<Header3 />
 				</View>
-				<View style={styles.form}>
-					<Text style={styles.inputLabel}>Numéro de téléphone</Text>
-					<PhoneInput
-						ref={phoneInput}
-						defaultValue={form.phone_number}
-						defaultCode="CM"
-						placeholder="..."
-						layout="first"
-						onChangeFormattedText={(phone_number) => {
-							setForm({ ...form, phone_number });
-						}}
-						withDarkTheme
-						withShadow
-						containerStyle={styles.containerStyle}
-						textInputStyle={styles.textInputStyle}
-						codeTextStyle={styles.codeTextStyle}
-						textContainerStyle={styles.textContainerStyle}
-					/>
-
-					<View style={styles.input}>
-						<Text style={styles.inputLabel}>Mot de passe</Text>
-						<TextInput
-							autoCorrect={false}
-							onChangeText={(password) => setForm({ ...form, password })}
-							placeholder="********"
-							placeholderTextColor="#6b7280"
-							style={styles.inputControl}
-							secureTextEntry={true}
-							value={form.password}
-							autoFocus
+				<KeyboardAwareScrollView>
+					<View style={styles.header}>
+						<View style={{ flexDirection: "row" }}>
+							<Text style={styles.title}>Se Connecter</Text>
+						</View>
+						<Text style={styles.subtitle}>Connectez-vous pour continuer</Text>
+					</View>
+					<View style={styles.form}>
+						<Text style={styles.inputLabel}>Numéro de téléphone</Text>
+						<PhoneInput
+							ref={phoneInput}
+							defaultValue={form.phone_number}
+							defaultCode="CM"
+							placeholder="..."
+							layout="first"
+							onChangeFormattedText={(phone_number) => {
+								setForm({ ...form, phone_number });
+							}}
+							withDarkTheme
+							withShadow
+							containerStyle={styles.containerStyle}
+							textInputStyle={styles.textInputStyle}
+							codeTextStyle={styles.codeTextStyle}
+							textContainerStyle={styles.textContainerStyle}
 						/>
-					</View>
-				</View>
-			</KeyboardAwareScrollView>
-			<Button
-				onPress={handleLoginRegister}
-				style1={styles.btncontainer}
-				style2={styles.btn}
-				style3={styles.btnText}
-				buttontext={"Se connecter"}
-				disabled={isLoading ? true : false}
-			/>
 
-			<Pressable
-				onPress={() => {
-					navigation.navigate("Login");
-				}}
-			></Pressable>
-			<Pressable
-				onPress={() => {
-					navigation.navigate("Phone");
-				}}
-			>
-				<Text style={styles.formFooter}>
-					Vous n'avez pas de compte ?{" "}
-					<Text
-						style={{
-							textDecorationLine: "underline",
-							color: COLORS.blue,
-						}}
-					>
-						S'enregistrer
+						<View style={styles.input}>
+							<Text style={styles.inputLabel}>Mot de passe</Text>
+							<TextInput
+								autoCorrect={false}
+								onChangeText={(password) => setForm({ ...form, password })}
+								placeholder="********"
+								placeholderTextColor="#6b7280"
+								style={styles.inputControl}
+								secureTextEntry={true}
+								value={form.password}
+								autoFocus={true}
+							/>
+						</View>
+					</View>
+				</KeyboardAwareScrollView>
+				<Button
+					onPress={handleLoginRegister}
+					style1={styles.btncontainer}
+					style2={styles.btn}
+					style3={styles.btnText}
+					buttontext={"Se connecter"}
+					disabled={isLoading ? true : false}
+				/>
+
+				<Pressable
+					onPress={() => {
+						navigation.navigate("Login");
+					}}
+				></Pressable>
+				<Pressable
+					onPress={() => {
+						navigation.navigate("Phone");
+					}}
+				>
+					<Text style={styles.formFooter}>
+						Vous n'avez pas de compte ?{" "}
+						<Text
+							style={{
+								textDecorationLine: "underline",
+								color: COLORS.blue,
+							}}
+						>
+							S'enregistrer
+						</Text>
 					</Text>
-				</Text>
-			</Pressable>
+				</Pressable>
 		</SafeAreaView>
 	);
 };
@@ -121,11 +122,12 @@ const styles = StyleSheet.create({
 		flexGrow: 1,
 		flexShrink: 1,
 		flexBasis: 0,
-		backgroundColor: COLORS.gray,
+		backgroundColor: COLORS.white,
 		justifyContent: "center",
 		alignContent: "center",
 		paddingBottom: 30,
 	},
+	
 	header: {
 		marginVertical: 20,
 		paddingTop: 50,
@@ -169,6 +171,13 @@ const styles = StyleSheet.create({
 		backgroundColor: "#FFF",
 		width: "100%",
 		marginBottom: 16,
+		shadowColor: "black",
+		shadowOpacity: 0.2,
+		shadowOffset: {
+			height: 2,
+			width: -2,
+		},
+		elevation: 4,
 	},
 	codeTextStyle: {
 		fontSize: 17,

@@ -2,6 +2,7 @@
   "expo": {
     "name": "netic-app",
     "slug": "netic-app",
+    "description":"Offrez vous une course peu importe votre budget",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { COLORS } from "../constants";
 import { ProductsItem } from "../utils/ProductsItem";
 import { SelectCountry } from "react-native-element-dropdown";
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 	imageStyle: {
 		width: 24,
 		height: 24,
-		marginRight: 5
+		marginRight: 5,
 	},
 	dropdown: {
 		height: 44,
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
 		borderWidth: 0.5,
 		borderRadius: 8,
 		paddingHorizontal: 8,
-		backgroundColor:COLORS.gray,
+		backgroundColor: COLORS.gray,
 		shadowOpacity: 0.2,
 		shadowRadius: 1.41,
 		shadowOffset: {

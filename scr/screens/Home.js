@@ -8,7 +8,7 @@ import {
 	Platform,
 } from "react-native";
 import BottomSheet from "../components/BottomSheet";
-import { useRef, useCallback, useState, useContext } from "react";
+import { useRef, useCallback, useState, useContext, useEffect } from "react";
 import ListItem from "../components/ListItem";
 import { COLORS } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
@@ -48,6 +48,9 @@ const Home = () => {
 			handleGetAllOders();
 		}, [])
 	);
+	useEffect(() => {
+		handlesearchFilter(searchText);
+	}, [searchText]);
 	const handleGetAllOders = async () => {
 		setLoadMore(true);
 		let lat = location?.coords?.latitude;
@@ -56,7 +59,7 @@ const Home = () => {
 		let query2 = `&lat=${lat}&long=${long}`;
 
 		await instance
-			.get(`order-list/` + query1 + query2)
+			.get("order-list/" + query1 + query2)
 			.then((response) => {
 				setfilterData([...data, ...response.data?.results]);
 				setData([...data, ...response.data?.results]);
@@ -118,7 +121,10 @@ const Home = () => {
 		if (text) {
 			const newData = data.filter((item) => {
 				const itemData = item.departure_place
-					? item.departure_place.toUpperCase()
+					? item.departure_place.toUpperCase() +
+					  item.arrival_place.toUpperCase() +
+					  item.budget +
+					  item.reference.toUpperCase()
 					: "".toUpperCase();
 				const textData = text.toUpperCase();
 				return itemData.indexOf(textData) > -1;

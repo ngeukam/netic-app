@@ -1,0 +1,1 @@
+export const device_token = '/api/v1/device-token'

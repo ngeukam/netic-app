@@ -1,5 +1,4 @@
 import { View, Text, Pressable, Image, ActivityIndicator } from "react-native";
-import React from "react";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../constants";

@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { COLORS } from "../constants";
 import { Dropdown } from "react-native-element-dropdown";
 

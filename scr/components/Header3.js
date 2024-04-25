@@ -1,5 +1,4 @@
-import { View, Text, Image, StyleSheet } from "react-native";
-import React from "react";
+import { Image, StyleSheet } from "react-native";
 import { images } from "../constants";
 
 const Header3 = () => {

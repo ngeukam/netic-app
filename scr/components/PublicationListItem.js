@@ -1,5 +1,4 @@
-import { View, Text, StyleSheet, Pressable, Image } from "react-native";
-import React from "react";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import moment from "moment";
 import { COLORS } from "../constants";
 import ProgressiveImage from "./ProgressiveImage";
@@ -44,12 +43,18 @@ const PublicationListItem = ({
 					<Text style={{ fontSize: 11, marginRight: 15 }}> {reference}</Text>
 				</View>
 				<View style={styles.address}>
-					<Text numberOfLines={1} style={{ fontSize: 16 }}>
-						De {departure_place}{" "}
-					</Text>
-					<Text numberOfLines={1} style={{ fontSize: 16 }}>
-						À {arrival_place}{" "}
-					</Text>
+					<View style={{ flexDirection: "row" }}>
+						<Text style={{ fontSize: 16, fontWeight: "600" }}>De </Text>
+						<Text numberOfLines={1} style={{ fontSize: 16 }}>
+							{departure_place}{" "}
+						</Text>
+					</View>
+					<View style={{ flexDirection: "row" }}>
+						<Text style={{ fontSize: 16, fontWeight: "600" }}>À </Text>
+						<Text numberOfLines={1} style={{ fontSize: 16 }}>
+							{arrival_place}{" "}
+						</Text>
+					</View>
 				</View>
 			</View>
 			{/* END PRODUCT AND ADDRESS CONTAINER */}

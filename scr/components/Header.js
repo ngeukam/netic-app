@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet, Pressable, Modal } from "react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { COLORS, icons } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
@@ -10,6 +10,7 @@ const Header = ({ title, onPress, searchText, onChangeText }) => {
 	const handleVisible = () => {
 		setModalVisible(true);
 	};
+	
 	return (
 		<View style={styles.container}>
 			<View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -52,7 +53,7 @@ const Header = ({ title, onPress, searchText, onChangeText }) => {
 					<View style={styles.modalView}>
 						<InputField
 							autoCapitalize="none"
-							placeholder="Recherchez un lieu de récupération"
+							placeholder="Recherchez un lieu, un budget ou une référence"
 							placeholderTextColor="#6b7280"
 							style={styles.inputControl}
 							value={searchText}

@@ -1,5 +1,4 @@
-import { View, Text, Animated, StyleSheet } from "react-native";
-import React from "react";
+import { View, Animated, StyleSheet } from "react-native";
 import { COLORS } from "../constants";
 
 const ProgressiveImage = ({ defaultImageSource, source, style, ...props }) => {

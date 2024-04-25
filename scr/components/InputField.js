@@ -1,5 +1,4 @@
-import { View, TextInput } from "react-native";
-import React from "react";
+import { TextInput } from "react-native";
 import { COLORS } from "../constants";
 
 const InputField = ({

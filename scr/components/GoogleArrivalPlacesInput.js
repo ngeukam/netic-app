@@ -1,4 +1,3 @@
-import React from "react";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { API_KEY } from "../../config";
 import { COLORS } from "../constants";
@@ -21,7 +20,7 @@ const GoogleArrivalPlacesInput = ({
 				onPress={onPress}
 				query={{
 					key: API_KEY,
-					language: "en",
+					language: "fr",
 					components: "country:cm",
 				}}
 				textInputProps={{

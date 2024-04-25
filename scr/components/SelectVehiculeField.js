@@ -1,13 +1,10 @@
 import { View, StyleSheet } from "react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { COLORS } from "../constants";
 import { VehiculesItem } from "../utils/VehiculesItem";
 import { SelectCountry } from "react-native-element-dropdown";
 
-const SelectVehiculeField = ({
-	value,
-	setValue,
-}) => {
+const SelectVehiculeField = ({ value, setValue }) => {
 	const [isFocus, setIsFocus] = useState(false);
 
 	return (
@@ -41,7 +38,6 @@ const SelectVehiculeField = ({
 
 export default SelectVehiculeField;
 
-
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: COLORS.white,
@@ -50,7 +46,7 @@ const styles = StyleSheet.create({
 	imageStyle: {
 		width: 24,
 		height: 24,
-		marginRight: 5
+		marginRight: 5,
 	},
 	dropdown: {
 		height: 44,
@@ -58,7 +54,7 @@ const styles = StyleSheet.create({
 		borderWidth: 0.5,
 		borderRadius: 8,
 		paddingHorizontal: 8,
-		backgroundColor:COLORS.gray,
+		backgroundColor: COLORS.gray,
 		shadowOpacity: 0.2,
 		shadowRadius: 1.41,
 		shadowOffset: {
@@ -70,7 +66,7 @@ const styles = StyleSheet.create({
 	icon: {
 		marginRight: 5,
 	},
-	
+
 	placeholderStyle: {
 		fontSize: 16,
 		color: COLORS.placeholder_text_color,
@@ -90,4 +86,3 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 	},
 });
-

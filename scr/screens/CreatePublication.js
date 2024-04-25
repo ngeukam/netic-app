@@ -20,15 +20,20 @@ import { instance } from "../../config";
 import { ToastSuccessMessage } from "../components/ToastSuccessMessage";
 import { ToastErrorMessage } from "../components/ToastErrorMessage";
 import { AuthContext } from "../context/AuthContext";
+import { LocationContext } from "../context/LocationContext";
 import { useIsFocused } from "@react-navigation/native";
 import GooglePlacesDepartureInput from "../components/GooglePlacesDepartureInput";
 import GoogleArrivalPlacesInput from "../components/GoogleArrivalPlacesInput";
+import currencyFormat from "../utils/CurrencyFormat";
 
 const CreatePublication = () => {
 	const GooglePlaceRef = useRef(null);
 	const GoogleArrivalRef = useRef(null);
 	const focused = useIsFocused();
-	const { userId } = useContext(AuthContext);
+	const { userId, sendNotification } = useContext(AuthContext);
+	const { location } = useContext(LocationContext);
+	let lat = location?.coords?.latitude;
+	let long = location?.coords?.longitude;
 	const [load, setLoad] = useState(false);
 	const [quantity, setQuantity] = useState(null);
 	const [budget, setBudget] = useState(null);
@@ -77,6 +82,7 @@ const CreatePublication = () => {
 	const handleCreatePublication = async () => {
 		if (!product || !quantity || !vehicule || !budget) {
 			ToastErrorMessage("Vous avez laissé des champs vides.");
+			return;
 		} else if (
 			!departure_place ||
 			!arrival_place ||
@@ -84,11 +90,35 @@ const CreatePublication = () => {
 			!long_departure_place
 		) {
 			ToastErrorMessage("Vous devez préciser les lieux.");
+			return;
 		} else {
 			setLoad(true);
 			await instance
 				.post(`order/`, formData)
-				.then(() => {
+				.then(async function () {
+					await instance
+						.post(`distance`, {
+							lat: lat,
+							long: long,
+							lat_departure_place: JSON.parse(lat_departure_place),
+							long_departure_place: JSON.parse(long_departure_place),
+						})
+						.then((response) => {
+							if (response.data?.distance < 20) {
+								sendNotification(
+									`Un nouveau job vous attend. Le bugdet proposé est de ${currencyFormat(
+										JSON.parse(budget),
+										JSON.parse(devise)
+									)}`
+								);
+							}
+						});
+
+					ToastSuccessMessage(
+						"Votre demande est maintentant visible dans le réseau."
+					);
+				})
+				.finally(() => {
 					setArrivalPlace();
 					setBudget();
 					setDeparturePlace();
@@ -103,11 +133,6 @@ const CreatePublication = () => {
 					setLongArrivalPlace();
 					GooglePlaceRef.current?.setAddressText("");
 					GoogleArrivalRef.current?.setAddressText("");
-					ToastSuccessMessage(
-						"Votre demande est maintentant visible dans le réseau."
-					);
-				})
-				.finally(() => {
 					setLoad(false);
 				});
 		}
@@ -268,7 +293,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: COLORS.white,
-		paddingTop: 30,
+		paddingTop: 25,
 		zIndex: 0,
 	},
 

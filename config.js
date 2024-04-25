@@ -1,21 +1,22 @@
 import axios from "axios";
-import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { ToastErrorMessage } from "./scr/components/ToastErrorMessage";
 import { ToastInternetErrorMessage } from "./scr/components/ToastInternetErrorMessage";
 import * as Network from "expo-network";
 
-const localhost = Platform.OS === "android" ? "192.168.34.101" : "127.0.0.1";
+const API_URL = "https://talon397.hostpapavps.net/";
 export const instance = axios.create({
-	baseURL: `http://${localhost}:8001/api/v1/`,
+	baseURL: API_URL,
+	withCredentials: true,
+	timeout: 5000,
 });
+
 instance.interceptors.request.use(
 	async (config) => {
 		const authToken = await SecureStore.getItemAsync("authToken");
 		if (authToken) {
 			config.headers.Authorization = `Bearer ${authToken}`;
 		}
-		// config.baseURL = `http://${localhost}:8000/api/v1/`;
 		return config;
 	},
 	(error) => {
@@ -26,7 +27,7 @@ instance.interceptors.request.use(
 async function refreshToken() {
 	const refresh = await SecureStore.getItemAsync("refreshToken");
 	if (refresh) {
-		const response = instance.post(`token/refresh/`, {
+		const response = instance.post(`token/refresh`, {
 			refresh: await SecureStore.getItemAsync("refreshToken"),
 		});
 		access = (await response).data.access;
@@ -42,23 +43,29 @@ instance.interceptors.response.use(
 	async function (error) {
 		const originalRequest = error.config;
 		const { isInternetReachable } = await Network.getNetworkStateAsync();
-		if (error.response?.status === 401 && !originalRequest._retry) {
+		if (error.response?.status === 401) {
+			if (error.config._retry) {
+				return Promise.reject(error);
+			}
 			originalRequest._retry = true;
 			const newAccessToken = await refreshToken();
-			axios.defaults.headers.common[
-				"Authorization"
-			] = `Bearer  ${newAccessToken}`;
-			return await instance(originalRequest);
+			error.config.headers.Authorization = `Bearer  ${newAccessToken}`;
+			const requestResult = await axios.request(error.config);
+			return requestResult;
+			// return await instance(originalRequest);
 		} else if (error.response?.status === 403) {
 			ToastErrorMessage("Pas autorisé.e");
 		} else if (error.response?.status === 404) {
 			ToastErrorMessage("Non trouvé");
 		} else if (error.response?.status === 400) {
-			ToastErrorMessage("Mauvaise requête");
+			// ToastErrorMessage("Mauvaise requête");
+			console.log("Mauvaise requête");
 		} else if (!isInternetReachable) {
 			ToastInternetErrorMessage("Vérifier votre connexion internet.");
+		} else if (error.message === "Network Error" && !error.response) {
+			// console.log(error.config)
+			ToastErrorMessage("Network Error");
 		} else {
-			ToastErrorMessage("Une erreur s'est produite");
 			console.log(error);
 		}
 		return Promise.reject(error);

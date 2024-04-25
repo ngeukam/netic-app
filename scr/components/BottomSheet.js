@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image } from "react-native";
-import React, { useCallback, useState, useContext } from "react";
+import { useCallback, useState, useContext } from "react";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { COLORS, images } from "../constants";
 import Button from "./Button";
@@ -133,7 +133,7 @@ const BottomSheet = ({ bottomSheetRef }) => {
 				style1={styles.formAction}
 				style2={styles.btn}
 				style3={styles.btnText}
-				buttontext={"Appuyez pour verser la commission"}
+				buttontext={"Continuez"}
 				activityIndicator={load ? true : false}
 				disabled={load ? true : false}
 			/>
@@ -177,6 +177,7 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		right: 0,
 		left: 0,
+		height: 50,
 		// top:25
 	},
 	btnText: {

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { View } from "react-native";
 import AuthStack from "./AuthStack";
 import AppStack from "./AppStack";
@@ -7,10 +7,8 @@ import LottieView from "lottie-react-native";
 import { images } from "../constants";
 import { NavigationContainer } from "@react-navigation/native";
 
-
 const AppNavigation = () => {
 	const { isLoading, userToken } = useContext(AuthContext);
-
 	if (isLoading) {
 		return (
 			<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -28,11 +26,7 @@ const AppNavigation = () => {
 	} else {
 		return (
 			<NavigationContainer>
-				{userToken? (
-					<AppStack />
-				) : (
-					<AuthStack />
-				)}
+				{userToken ? <AppStack /> : <AuthStack />}
 			</NavigationContainer>
 		);
 	}

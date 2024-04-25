@@ -1,24 +1,16 @@
 import { useState, useEffect, useContext } from "react";
-import {
-	StyleSheet,
-	SafeAreaView,
-	View,
-	Text,
-	TextInput,
-} from "react-native";
+import { StyleSheet, SafeAreaView, View, Text, TextInput } from "react-native";
 import Header3 from "../../components/Header3";
 import { COLORS } from "../../constants";
 import Button from "../../components/Button";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import PasswordStrength from "../../components/PasswordStrength";
-import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import { AuthContext } from "../../context/AuthContext";
 import { instance } from "../../../config";
 import { ToastErrorMessage } from "../../components/ToastErrorMessage";
 import { Feather } from "@expo/vector-icons";
 const Register = () => {
-	const navigation = useNavigation();
 	const { Login } = useContext(AuthContext);
 	const [form, setForm] = useState({
 		name: "",
@@ -198,7 +190,7 @@ const styles = StyleSheet.create({
 		flexGrow: 1,
 		flexShrink: 1,
 		flexBasis: 0,
-		backgroundColor: COLORS.gray,
+		backgroundColor: COLORS.white,
 		justifyContent: "center",
 		alignContent: "center",
 		paddingBottom: 20,

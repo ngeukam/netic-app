@@ -20,7 +20,7 @@ export const LocationProvider = ({ children }) => {
 
 	return (
 		<LocationContext.Provider value={{ location }}>
-			{location ? children : null}
+			{children}
 		</LocationContext.Provider>
 	);
 };

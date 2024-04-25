@@ -27,13 +27,13 @@ const bus =  require("../../assets/images/bus.png");
 const material =  require("../../assets/images/material.png");
 const fourgon =  require("../../assets/images/fourgon.png");
 const train =  require("../../assets/images/train.png");
+const bckimage =  require("../../assets/images/bckground.png");
 
 // SplashScreen Animation
 const delivery_anim = require("../../assets/jsonanimation/delivery.json");
-const taxi_anim = require("../../assets/jsonanimation/taxi.json");
-const truck_anim = require("../../assets/jsonanimation/truck-.json");
 
 export default {
+	bckimage,
 	avatar,
 	baggages,
 	garbage,
@@ -58,8 +58,6 @@ export default {
 	tricycle,
 	airplane,
 	delivery_anim,
-	truck_anim,
-	taxi_anim,
 	default_img,
     logo1,
 	bus,

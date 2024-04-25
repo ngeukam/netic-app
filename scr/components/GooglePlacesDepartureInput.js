@@ -21,7 +21,7 @@ const GooglePlacesDepartureInput = ({
 				onPress={onPress}
 				query={{
 					key: API_KEY,
-					language: "en",
+					language: "fr",
 					components: "country:cm",
 				}}
 				styles={textInputStyle}

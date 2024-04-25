@@ -1,5 +1,4 @@
-import { View, StyleSheet, Image } from "react-native";
-import React from "react";
+import { View, StyleSheet } from "react-native";
 import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -114,7 +113,7 @@ const styles = StyleSheet.create({
 	product: {
 		flexDirection: "column",
 		alignItems: "center",
-		rowGap:3
+		rowGap: 3,
 	},
 	address: {
 		marginRight: -PADDING_HORIZONTAL + 5,

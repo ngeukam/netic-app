@@ -1,6 +1,4 @@
 import { View, Text, ActivityIndicator, Pressable } from "react-native";
-import React from "react";
-
 const RensendOtp = ({
 	textStyle1,
     textStyle2,

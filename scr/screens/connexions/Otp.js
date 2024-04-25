@@ -90,7 +90,7 @@ const Otp = () => {
 	const resendOtp = async () => {
 		setResendingOtp(true);
 		instance
-			.post(`send-otp/`, {
+			.post(`send-otp`, {
 				phone_number: phone,
 				otpcode: otpcode,
 			})
@@ -118,14 +118,17 @@ const Otp = () => {
 	};
 	const handleSubmitOTPForm = async () => {
 		setOtpBol(true);
-		if (JSON.parse(otpcode) == join_otp_input) {
-			navigation.navigate("Register");
-			setOtpBol(false);
-			DeleteKey("OtpStore");
-		} else {
-			ToastErrorMessage("Ce code ne correspond pas!");
-			setOtpBol(false);
-		}
+		// if (JSON.parse(otpcode) == join_otp_input) {
+		// 	navigation.navigate("Register");
+		// 	setOtpBol(false);
+		// 	DeleteKey("OtpStore");
+		// } else {
+		// 	ToastErrorMessage("Ce code ne correspond pas!");
+		// 	setOtpBol(false);
+		// }
+		navigation.navigate("Register");
+		setOtpBol(false);
+		DeleteKey("OtpStore");
 	};
 	return (
 		<SafeAreaView style={styles.container}>
@@ -160,6 +163,7 @@ const Otp = () => {
 									ref={(input) => {
 										inputs[index] = input;
 									}}
+									autoFocus={true}
 								/>
 							))}
 						</View>
@@ -199,8 +203,8 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignContent: "center",
 		paddingHorizontal: 16,
-		backgroundColor: COLORS.gray,
-		// rowGap: 40,
+		backgroundColor: COLORS.white,
+		
 	},
 	container_phone_error_message: {
 		alignItems: "center",

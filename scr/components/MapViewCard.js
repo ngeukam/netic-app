@@ -1,5 +1,4 @@
 import { View, StyleSheet, Dimensions, Platform } from "react-native";
-import React from "react";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 const MapViewCard = () => {
 	const { width, height } = Dimensions.get("window");

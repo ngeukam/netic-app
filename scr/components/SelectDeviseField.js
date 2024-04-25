@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { DeviseItem } from "../utils/DeviseItem";
 import { COLORS } from "../constants";
 import { Dropdown } from "react-native-element-dropdown";
@@ -30,7 +30,7 @@ export default SelectDeviseField;
 
 const styles = StyleSheet.create({
 	dropdown: {
-		flex:1,
+		flex: 1,
 		height: 44,
 		borderColor: COLORS.gray,
 		borderWidth: 0,
